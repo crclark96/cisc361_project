@@ -22,27 +22,9 @@ Job::Job(int arr_time,
   this->priority = priority;
 }
 
-int Job::get_arr_time(){
-  return this->arr_time;
-}
-
-int Job::get_job_num(){
-  return this->job_num;
-}
-
-int Job::get_mem_req(){
-  return this->mem_req;
-}
-
-int Job::get_max_dev(){
-  return this->max_dev;
-}
-
-int Job::get_run_time(){
-  return this->run_time;
-}
-
-int Job::get_priority(){
-  return this->priority;
-}
-
+int Job::get_arr_time(){return this->arr_time;}
+int Job::get_job_num(){return this->job_num;}
+int Job::get_mem_req(){return this->mem_req;}
+int Job::get_max_dev(){return this->max_dev;}
+int Job::get_run_time(){return this->run_time;}
+int Job::get_priority(){return this->priority;}

@@ -13,7 +13,7 @@ class Job {
     run_time,
     priority;
 
-public:
+ public:
   Job(int arr_time,
       int job_num,
       int mem_req,
