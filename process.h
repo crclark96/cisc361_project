@@ -8,12 +8,12 @@
 #include "job.h"
 
 class Process{
-  Job job;
+  Job *job;
   int alloc_dev,
     elap_time;
 
  public:
-  Process(Job job);
+  Process(Job *job);
   void set_alloc_dev(int dev);
   void set_elap_time(int time);
   int get_alloc_dev();
