@@ -5,7 +5,7 @@
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
-#include <queue>
+#include <list>
 #include "job.h"
 #include "process.h"
 
@@ -17,13 +17,13 @@ class System {
     avail_dev,
     quantum;
 
-  std::queue<Job> sub_q;
-  std::queue<Job> hold_q1;
-  std::queue<Job> hold_q2;
+  std::list<Job*> *sub_q;
+  std::list<Job*> *hold_q1;
+  std::list<Job*> *hold_q2;
 
-  std::queue<Process> ready_q;
-  std::queue<Process> wait_q;
-  std::queue<Process> complete_q;
+  std::list<Process*> *ready_q;
+  std::list<Process*> *wait_q;
+  std::list<Process*> *complete_q;
   
  public:
   System(int time,
