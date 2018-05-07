@@ -3,6 +3,7 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include "system.h"
 
 System::System(int time,
@@ -34,21 +35,196 @@ void System::set_time(int time){this->time = time;}
 void System::set_avail_mem(int memory){this->avail_mem = memory;}
 void System::set_avail_dev(int devices){this->avail_dev = devices;}
 
+bool sort_hold_q1(Job *job1, Job *job2){
+  if(job1->get_run_time() == job2->get_run_time()){
+    return job1->get_arr_time() < job2->get_arr_time();  // SJF
+  } else {
+    return job1->get_run_time() < job2->get_run_time();  // FIFO
+  }
+}
+
+bool sort_hold_q2(Job *job1, Job *job2){
+  return job1->get_arr_time() < job2->get_arr_time();  // FIFO
+}
+
 void System::submit(Job *job){
-  if(job->get_mem_req() > this->get_tot_mem()){
-    std::cout << "job rejected: insufficient system memory" << std::endl;
+  if(job->get_mem_req() > this->get_tot_mem() ||
+     job->get_max_dev() > this->get_tot_dev()){
+    std::cout << "job rejected: insufficient system resources" << std::endl;
   } else if(job->get_mem_req() > this->get_avail_mem()) {
     switch(job->get_priority()){
     case 1:
       this->hold_q1->push_back(job);
+      this->hold_q1->sort(sort_hold_q1);
       break;
     case 2:
       this->hold_q2->push_back(job);
+      this->hold_q2->sort(sort_hold_q2);
       break;
     }
   } else {
     this->ready_q->push_back(new Process(job));
   }
-  
 }
 
+void System::status(){
+
+  std::cout << "---------- System Information ----------"
+            << std::endl;
+  std::cout << "time: " << this->get_time() << std::endl;
+  std::cout << "mem : " << this->get_avail_mem() << std::endl;
+  std::cout << "dev : " << this->get_avail_dev() << std::endl;
+  std::cout << std::endl;
+
+
+  std::cout << "------------- Hold Queue 1 -------------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | Dev | Run | Pri "
+            << std::endl;
+  std::cout << "------------------------------------"
+            << std::endl;
+  std::list<Job*>::iterator it1;
+  for(it1=hold_q1->begin();it1!=hold_q1->end();it1++){
+    std::cout << std::setw(6)
+              << (*it1)->get_job_num()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_arr_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_mem_req()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_max_dev()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_run_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_priority()
+              << std::endl;
+  }
+
+
+  std::cout << "------------- Hold Queue 2 -------------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | Dev | Run | Pri "
+            << std::endl;
+  std::cout << "------------------------------------"
+            << std::endl;
+  for(it1=hold_q2->begin();it1!=hold_q2->end();it1++){
+    std::cout << std::setw(6)
+              << (*it1)->get_job_num()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_arr_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_mem_req()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_max_dev()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_run_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it1)->get_priority()
+              << std::endl;
+  }
+
+
+  std::cout << "------------- Ready Queue --------------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+            << std::endl;
+  std::cout << "--------------------------------------------------- "
+            << std::endl;
+  std::list<Process*>::iterator it2;
+  for(it2=ready_q->begin();it2!=ready_q->end();it2++){
+    std::cout << std::setw(6)
+              << (*it2)->get_job_num()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_arr_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_mem_req()
+              << "|";
+    std::cout << std::setw(6)
+              << (*it2)->get_max_dev()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_run_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_priority()
+              << "|";
+    std::cout << std::setw(6)
+              << (*it2)->get_alloc_dev()
+              << std::endl;
+  }
+
+
+    std::cout << "------------- Wait Queue ---------------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+            << std::endl;
+  std::cout << "--------------------------------------------------- "
+            << std::endl;
+  for(it2=wait_q->begin();it2!=wait_q->end();it2++){
+    std::cout << std::setw(6)
+              << (*it2)->get_job_num()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_arr_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_mem_req()
+              << "|";
+    std::cout << std::setw(6)
+              << (*it2)->get_max_dev()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_run_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_priority()
+              << "|";
+    std::cout << std::setw(6)
+              << (*it2)->get_alloc_dev()
+              << std::endl;
+  }
+
+
+    std::cout << "------------- Complete Queue -----------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+            << std::endl;
+  std::cout << "--------------------------------------------------- "
+            << std::endl;
+  for(it2=complete_q->begin();it2!=complete_q->end();it2++){
+    std::cout << std::setw(6)
+              << (*it2)->get_job_num()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_arr_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_mem_req()
+              << "|";
+    std::cout << std::setw(6)
+              << (*it2)->get_max_dev()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_run_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_priority()
+              << "|";
+    std::cout << std::setw(6)
+              << (*it2)->get_alloc_dev()
+              << std::endl;
+  }
+  
+}
