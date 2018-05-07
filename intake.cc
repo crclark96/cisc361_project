@@ -8,13 +8,13 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include "system.h"
+#include "job.h"
 
 std::vector<std::string> parse(std::string);
-void process_config(std::vector<std::string>);
-void process_arrival(std::vector<std::string>);
-void process_request(std::vector<std::string>);
-void process_release(std::vector<std::string>);
-void process_display(std::vector<std::string>);
+System* process_config(std::vector<std::string>);
+Job* process_arrival(std::vector<std::string>);
+
 
 int main(int argc, const char* argv[]){
   if(argc != 2){
@@ -24,24 +24,44 @@ int main(int argc, const char* argv[]){
 
   std::ifstream fh(argv[1]);
   std::string line;
+  System *system;
+  Job *job_arrive;
 
   while(getline(fh, line)){
     std::vector<std::string> split_line = parse(line);
+
     switch((char)line[0]){
     case 'C' :
-      process_config(split_line);
+      system = process_config(split_line);
       break;
     case 'A' :
-      process_arrival(split_line);
+      job_arrive = process_arrival(split_line);
+      if(job_arrive->get_mem_req() <= system->get_tot_mem()){
+        system->submit(job_arrive);
+      }
+      else{
+        std::cout << "job needs more memeory than system total" << std::endl;
+      }
       break;
     case 'Q' :
-      process_request(split_line);
+      std::cout << "request " << std::endl;
+      system->request(stoi(split_line[1]),
+                      stoi(split_line[2].substr(2)),
+                      stoi(split_line[3].substr(2)));
       break;
     case 'L' :
-      process_release(split_line);
+      std::cout << "release " << std::endl;
+      system->release(stoi(split_line[1]),
+                      stoi(split_line[2].substr(2)),
+                      stoi(split_line[3].substr(2)));
       break;
     case 'D' :
-      process_display(split_line);
+      std::cout << "display " << std::endl;
+      system->status();
+      if(split_line[1] == "9999"){
+        //Dump the final state. TODO
+        std::cout << "end of input file. Dumping final state " << std::endl;
+      }
       break;
     default:
       std::cout << "invalid instruction: " << line << std::endl;
@@ -59,19 +79,21 @@ std::vector<std::string> parse(std::string input){
   return results;
 }
 
-void process_config(std::vector<std::string> split_line){
-
+System* process_config(std::vector<std::string> split_line){
   std::cout << "config " << std::endl;
+  return new System(stoi(split_line[1]), 
+                      stoi(split_line[2].substr(2)),
+                      stoi(split_line[3].substr(2)),
+                      stoi(split_line[4].substr(2)));
 }
-void process_arrival(std::vector<std::string> split_line){
+
+Job* process_arrival(std::vector<std::string> split_line){
   std::cout << "arrival " << std::endl;
-}
-void process_request(std::vector<std::string> split_line){
-  std::cout << "request " << std::endl;
-}
-void process_release(std::vector<std::string> split_line){
-  std::cout << "release " << std::endl;
-}
-void process_display(std::vector<std::string> split_line){
-  std::cout << "display " << std::endl;
+  return new Job(stoi(split_line[1]),
+                stoi(split_line[2].substr(2)),
+                stoi(split_line[3].substr(2)),
+                stoi(split_line[4].substr(2)),
+                stoi(split_line[5].substr(2)),
+                stoi(split_line[6].substr(2))
+                );
 }
