@@ -5,39 +5,42 @@
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
-#include <queue>
+#include <list>
 #include "job.h"
 #include "process.h"
 
 class System {
   int time,
-    memory,
-    devices,
+    tot_mem,
+    avail_mem,
+    tot_dev,
+    avail_dev,
     quantum;
 
-  std::queue<Job> sub_q;
-  std::queue<Job> hold_q1;
-  std::queue<Job> hold_q2;
+  std::list<Job*> *sub_q;
+  std::list<Job*> *hold_q1;
+  std::list<Job*> *hold_q2;
 
-  std::queue<Process> ready_q;
-  std::queue<Process> wait_q;
-  std::queue<Process> complete_q;
+  std::list<Process*> *ready_q;
+  std::list<Process*> *wait_q;
+  std::list<Process*> *complete_q;
   
  public:
   System(int time,
-         int memory,
-         int devices,
+         int tot_mem,
+         int tot_dev,
          int quantum);
   int get_time();
-  int get_memory();
-  int get_devices();
+  int get_tot_mem();
+  int get_avail_mem();
+  int get_tot_dev();
+  int get_avail_dev();
   int get_quantum();
   void set_time(int time);
-  void set_memory(int memory);
-  void set_devices(int devices);
-  void set_quantum(int quantum);
+  void set_avail_dev(int devices);
+  void set_avail_mem(int memory);
 
-  void submit(Job job);
+  void submit(Job *job);
   void update();
   void status();
   void request(int time, int job_num, int dev);
