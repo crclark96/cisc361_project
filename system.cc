@@ -67,6 +67,16 @@ void System::submit(Job *job){
   }
 }
 
+void System::request(int time, int job_num, int dev){
+  std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
+}
+
+void System::release(int time, int job_num, int dev){
+  std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
+}
+
+
+//GO NO FURTHER
 void System::status(){
 
   std::cout << "---------- System Information ----------"

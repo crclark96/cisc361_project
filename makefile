@@ -1,10 +1,13 @@
 CC = g++
-OBJS = system.o job.o process.o
+OBJS = system.o job.o process.o intake.o
 
 default:
 
 test: test.o $(OBJS)
 	$(CC) $^ -o test
+
+intake_test: intake.o $(OBJS)
+	$(CC) $^ -o intake
 
 %.o: %.cc %.h
 	$(CC) -c $<
