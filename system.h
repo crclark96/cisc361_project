@@ -37,6 +37,12 @@ class System {
   void set_devices(int devices);
   void set_quantum(int quantum);
 
+  void submit(Job job);
+  void update();
+  void status();
+  void request(int time, int job_num, int dev);
+  void release(int time, int job_num, int dev);
+  
 };
 
 #endif

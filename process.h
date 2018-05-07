@@ -14,7 +14,16 @@ class Process{
 
  public:
   Process(Job job);
-  
+  void set_alloc_dev(int dev);
+  void set_elap_time(int time);
+  int get_alloc_dev();
+  int get_elap_time();
+  int get_arr_time();
+  int get_job_num();
+  int get_mem_req();
+  int get_max_dev();
+  int get_run_time();
+  int get_priority();
 };
 
 #endif
