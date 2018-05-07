@@ -11,8 +11,10 @@
 
 class System {
   int time,
-    memory,
-    devices,
+    tot_mem,
+    avail_mem,
+    tot_dev,
+    avail_dev,
     quantum;
 
   std::queue<Job> sub_q;
@@ -25,17 +27,18 @@ class System {
   
  public:
   System(int time,
-         int memory,
-         int devices,
+         int tot_mem,
+         int tot_dev,
          int quantum);
   int get_time();
-  int get_memory();
-  int get_devices();
+  int get_tot_mem();
+  int get_avail_mem();
+  int get_tot_dev();
+  int get_avail_dev();
   int get_quantum();
   void set_time(int time);
-  void set_memory(int memory);
-  void set_devices(int devices);
-  void set_quantum(int quantum);
+  void set_avail_dev(int devices);
+  void set_avail_mem(int memory);
 
   void submit(Job *job);
   void update();
