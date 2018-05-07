@@ -5,12 +5,24 @@
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
+#include <queue>
+#include "job.h"
+#include "process.h"
+
 class System {
   int time,
     memory,
     devices,
     quantum;
 
+  std::queue<Job> sub_q;
+  std::queue<Job> hold_q1;
+  std::queue<Job> hold_q2;
+
+  std::queue<Process> ready_q;
+  std::queue<Process> wait_q;
+  std::queue<Process> complete_q;
+  
  public:
   System(int time,
          int memory,

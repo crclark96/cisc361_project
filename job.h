@@ -12,7 +12,7 @@ class Job {
     max_dev,
     run_time,
     priority;
-
+  
  public:
   Job(int arr_time,
       int job_num,
