@@ -76,7 +76,7 @@ int main(int argc, const char* argv[]){
 
 std::vector<std::string> parse(std::string input){
   std::istringstream iss(input);
-  std::vector<std::string> results(std::istream_iterator<std::string>{iss},
+  std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
                                  std::istream_iterator<std::string>());
   return results;
 }

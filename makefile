@@ -1,6 +1,6 @@
 CC = g++
-OBJS = system.o job.o process.o intake.o
-TESTS = system_test
+OBJS = system.o job.o process.o
+TESTS = system_test intake_test
 
 default: intake.o
 
@@ -11,7 +11,8 @@ system_test: system_test.o $(OBJS)
 	./$@
 
 intake_test: intake.o $(OBJS)
-	$(CC) $^ -o intake
+	$(CC) $^ -o $@
+	./$@ test.txt
 
 %.o: %.cc %.h
 	$(CC) -c $<
