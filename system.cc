@@ -148,7 +148,7 @@ void System::status(){
             << std::endl;
   std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
             << std::endl;
-  std::cout << "--------------------------------------------------- "
+  std::cout << "------------------------------------------- "
             << std::endl;
   std::list<Process*>::iterator it2;
   for(it2=ready_q->begin();it2!=ready_q->end();it2++){
@@ -180,7 +180,7 @@ void System::status(){
             << std::endl;
   std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
             << std::endl;
-  std::cout << "--------------------------------------------------- "
+  std::cout << "------------------------------------------- "
             << std::endl;
   for(it2=wait_q->begin();it2!=wait_q->end();it2++){
     std::cout << std::setw(6)
@@ -211,7 +211,7 @@ void System::status(){
             << std::endl;
   std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
             << std::endl;
-  std::cout << "--------------------------------------------------- "
+  std::cout << "------------------------------------------- "
             << std::endl;
   for(it2=complete_q->begin();it2!=complete_q->end();it2++){
     std::cout << std::setw(6)
