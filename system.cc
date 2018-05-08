@@ -84,8 +84,12 @@ void System::swap_cpu_jobs(){
     }
   }
   // move next job to cpu
-  this->cpu=this->ready_q->front();
-  this->ready_q->pop_front();
+  if(!this->ready_q->empty()){
+    this->cpu=this->ready_q->front();
+    this->ready_q->pop_front();
+  } else {
+    this->cpu=NULL;
+  }
 }
 
 void System::request(int time, int job_num, int dev){

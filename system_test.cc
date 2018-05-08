@@ -21,6 +21,9 @@ int main(){
 
 void swap_cpu_job_test(){
   System *system = new System(0,15,15,2);
+  assert(system->get_running_job_num()==0);  
+  system->swap_cpu_jobs();
+  assert(system->get_running_job_num()==0);
   system->submit(new Job(1,1,4,3,88,1));
   system->submit(new Job(2,2,4,4,88,1));
   system->swap_cpu_jobs();
