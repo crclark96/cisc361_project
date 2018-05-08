@@ -33,7 +33,7 @@ int System::get_avail_mem(){return this->avail_mem;}
 int System::get_tot_dev(){return this->tot_dev;}
 int System::get_avail_dev(){return this->avail_dev;}
 int System::get_quantum(){return this->quantum;}
-int System::get_running_job_num(){return this->cpu==nullptr?0:this->cpu->get_job_num();}
+int System::get_running_job_num(){return this->cpu==NULL?0:this->cpu->get_job_num();}
 void System::set_time(int time){this->time = time;}
 void System::set_avail_mem(int memory){this->avail_mem = memory;}
 void System::set_avail_dev(int devices){this->avail_dev = devices;}
