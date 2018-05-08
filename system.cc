@@ -33,6 +33,7 @@ int System::get_avail_mem(){return this->avail_mem;}
 int System::get_tot_dev(){return this->tot_dev;}
 int System::get_avail_dev(){return this->avail_dev;}
 int System::get_quantum(){return this->quantum;}
+int System::get_running_job_num(){return this->cpu==nullptr?0:this->cpu->get_job_num();}
 void System::set_time(int time){this->time = time;}
 void System::set_avail_mem(int memory){this->avail_mem = memory;}
 void System::set_avail_dev(int devices){this->avail_dev = devices;}
@@ -67,6 +68,24 @@ void System::submit(Job *job){
   } else {
     this->ready_q->push_back(new Process(job));
   }
+}
+
+void System::swap_cpu_jobs(){
+  /* this function updates which job is being run on the cpu
+   * it does not increment the timer
+   */
+  if(this->cpu != nullptr){
+    if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){
+      // if process is done
+      this->complete_q->push_back(this->cpu); // add process to complete queue
+    } else {
+      // otherwise
+      this->ready_q->push_back(this->cpu); // add process to back of ready queue
+    }
+  }
+  // move next job to cpu
+  this->cpu=this->ready_q->front();
+  this->ready_q->pop_front();
 }
 
 void System::request(int time, int job_num, int dev){

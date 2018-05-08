@@ -36,6 +36,7 @@ class System {
   int get_tot_dev();
   int get_avail_dev();
   int get_quantum();
+  int get_running_job_num();
   void set_time(int time);
   void set_avail_dev(int devices);
   void set_avail_mem(int memory);
@@ -45,6 +46,7 @@ class System {
   void status();
   void request(int time, int job_num, int dev);
   void release(int time, int job_num, int dev);
+  void swap_cpu_jobs(); // moves current job to a queue, moves next job to cpu
   
 };
 
