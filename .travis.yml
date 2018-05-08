@@ -4,6 +4,5 @@ install:true
 
 script:
 - make test
-- ./test
 - make
 

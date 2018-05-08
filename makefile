@@ -1,10 +1,14 @@
 CC = g++
 OBJS = system.o job.o process.o intake.o
+TESTS = system_test
 
 default: intake.o
 
-test: test.o $(OBJS)
-	$(CC) $^ -o test
+test: $(TESTS)
+
+system_test: system_test.o $(OBJS)
+	$(CC) $^ -o $@
+	./$@
 
 intake_test: intake.o $(OBJS)
 	$(CC) $^ -o intake
