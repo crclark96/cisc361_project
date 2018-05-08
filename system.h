@@ -24,7 +24,7 @@ class System {
   std::list<Process*> *ready_q;
   std::list<Process*> *wait_q;
   std::list<Process*> *complete_q;
-  
+  Process* cpu;
  public:
   System(int time,
          int tot_mem,

@@ -23,6 +23,8 @@ System::System(int time,
   this->ready_q = new std::list<Process*>();
   this->wait_q = new std::list<Process*>();
   this->complete_q = new std::list<Process*>();
+
+  this->cpu = nullptr;
 }
 
 int System::get_time(){return this->time;}
@@ -69,10 +71,26 @@ void System::submit(Job *job){
 
 void System::request(int time, int job_num, int dev){
   std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
+  if(this->cpu != nullptr){
+    if(this->get_avail_dev() < dev){
+      std::cout << "cannot allocate devices, not enough resources" << std::endl;
+    } else {
+      this->set_avail_dev(this->get_avail_dev()-dev);
+      this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
+    }
+  } else {
+    std::cout << "no current running job" << std::endl;
+  }
 }
 
 void System::release(int time, int job_num, int dev){
   std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
+  if(this->cpu != nullptr){
+    this->set_avail_dev(this->get_avail_dev()+dev);
+    this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
+  } else {
+    std::cout << "no current running job" << std::endl;
+  }
 }
 
 
