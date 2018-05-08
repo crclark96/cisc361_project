@@ -1,7 +1,7 @@
 CC = g++
 OBJS = system.o job.o process.o intake.o
 
-default:
+default: intake.o
 
 test: test.o $(OBJS)
 	$(CC) $^ -o test
