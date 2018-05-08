@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++11
+CFLAGS = -g 
 OBJS = system.o job.o process.o
 TESTS = system_test intake_test
 
