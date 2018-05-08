@@ -31,7 +31,7 @@ int main(int argc, const char* argv[]){
 
   while(getline(fh, line)){
     std::vector<std::string> split_line = parse(line);
-
+    int t, j, d;
     switch((char)line[0]){
     case 'C' :
       system = process_config(split_line);
@@ -47,15 +47,17 @@ int main(int argc, const char* argv[]){
       break;
     case 'Q' :
       std::cout << "request " << std::endl;
-      system->request(stoi(split_line[1]),
-                      stoi(split_line[2].substr(2)),
-                      stoi(split_line[3].substr(2)));
+      std::istringstream(split_line[1]) >> t;
+      std::istringstream(split_line[2].substr(2)) >> j;
+      std::istringstream(split_line[3].substr(2)) >> d;
+      system->request(t, j, d);
       break;
     case 'L' :
       std::cout << "release " << std::endl;
-      system->release(stoi(split_line[1]),
-                      stoi(split_line[2].substr(2)),
-                      stoi(split_line[3].substr(2)));
+      std::istringstream(split_line[1]) >> t;
+      std::istringstream(split_line[2].substr(2)) >> j;
+      std::istringstream(split_line[3].substr(2)) >> d;
+      system->release(t, j, d);
       break;
     case 'D' :
       std::cout << "display " << std::endl;
@@ -83,19 +85,22 @@ std::vector<std::string> parse(std::string input){
 
 System* process_config(std::vector<std::string> split_line){
   std::cout << "config " << std::endl;
-  return new System(stoi(split_line[1]), 
-                      stoi(split_line[2].substr(2)),
-                      stoi(split_line[3].substr(2)),
-                      stoi(split_line[4].substr(2)));
+  int t, m, s, q;
+  std::istringstream(split_line[1]) >> t;
+  std::istringstream(split_line[2].substr(2)) >> m;
+  std::istringstream(split_line[3].substr(2)) >> s;
+  std::istringstream(split_line[4].substr(2)) >> q;
+  return new System(t,m,s,q);
 }
 
 Job* process_arrival(std::vector<std::string> split_line){
   std::cout << "arrival " << std::endl;
-  return new Job(stoi(split_line[1]),
-                stoi(split_line[2].substr(2)),
-                stoi(split_line[3].substr(2)),
-                stoi(split_line[4].substr(2)),
-                stoi(split_line[5].substr(2)),
-                stoi(split_line[6].substr(2))
-                );
+  int t, j, m, s, r, p;
+  std::istringstream(split_line[1]) >> t;
+  std::istringstream(split_line[2].substr(2)) >> j;
+  std::istringstream(split_line[3].substr(2)) >> m;
+  std::istringstream(split_line[4].substr(2)) >> s;
+  std::istringstream(split_line[5].substr(2)) >> r;
+  std::istringstream(split_line[6].substr(2)) >> p;
+  return new Job(t,j,m,s,r,p);
 }
