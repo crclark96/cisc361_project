@@ -1,6 +1,6 @@
 language: cpp
 
-install:true
+install: true
 
 script:
 - make test
