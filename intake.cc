@@ -47,15 +47,15 @@ int main(int argc, const char* argv[]){
       break;
     case 'Q' :
       std::cout << "request " << std::endl;
-      system->request(stoi(split_line[1]),
-                      stoi(split_line[2].substr(2)),
-                      stoi(split_line[3].substr(2)));
+      system->request(std::stoi(split_line[1]),
+                      std::stoi(split_line[2].substr(2)),
+                      std::stoi(split_line[3].substr(2)));
       break;
     case 'L' :
       std::cout << "release " << std::endl;
-      system->release(stoi(split_line[1]),
-                      stoi(split_line[2].substr(2)),
-                      stoi(split_line[3].substr(2)));
+      system->release(std::stoi(split_line[1]),
+                      std::stoi(split_line[2].substr(2)),
+                      std::stoi(split_line[3].substr(2)));
       break;
     case 'D' :
       std::cout << "display " << std::endl;
@@ -83,19 +83,19 @@ std::vector<std::string> parse(std::string input){
 
 System* process_config(std::vector<std::string> split_line){
   std::cout << "config " << std::endl;
-  return new System(stoi(split_line[1]), 
-                      stoi(split_line[2].substr(2)),
-                      stoi(split_line[3].substr(2)),
-                      stoi(split_line[4].substr(2)));
+  return new System(std::stoi(split_line[1]), 
+                      std::stoi(split_line[2].substr(2)),
+                      std::stoi(split_line[3].substr(2)),
+                      std::stoi(split_line[4].substr(2)));
 }
 
 Job* process_arrival(std::vector<std::string> split_line){
   std::cout << "arrival " << std::endl;
-  return new Job(stoi(split_line[1]),
-                stoi(split_line[2].substr(2)),
-                stoi(split_line[3].substr(2)),
-                stoi(split_line[4].substr(2)),
-                stoi(split_line[5].substr(2)),
-                stoi(split_line[6].substr(2))
+  return new Job(std::stoi(split_line[1]),
+                std::stoi(split_line[2].substr(2)),
+                std::stoi(split_line[3].substr(2)),
+                std::stoi(split_line[4].substr(2)),
+                std::stoi(split_line[5].substr(2)),
+                std::stoi(split_line[6].substr(2))
                 );
 }
