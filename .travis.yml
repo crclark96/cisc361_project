@@ -1,5 +1,7 @@
 language: cpp
 
+install:true
+
 script:
 - make test
 - ./test
