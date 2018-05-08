@@ -71,25 +71,29 @@ void System::submit(Job *job){
 
 void System::request(int time, int job_num, int dev){
   std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
-  if(this->cpu != nullptr){
+  if(this->cpu != nullptr && this->cpu->get_job_num() == job_num){
     if(this->get_avail_dev() < dev){
       std::cout << "cannot allocate devices, not enough resources" << std::endl;
     } else {
       this->set_avail_dev(this->get_avail_dev()-dev);
       this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
     }
-  } else {
+  } else if (this->cpu == nullptr){
     std::cout << "no current running job" << std::endl;
+  } else {
+    std::cout << "running job does not match request" << std::endl;
   }
 }
 
 void System::release(int time, int job_num, int dev){
   std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
-  if(this->cpu != nullptr){
+  if(this->cpu != nullptr && this->cpu->get_job_num() == job_num){
     this->set_avail_dev(this->get_avail_dev()+dev);
     this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
-  } else {
+  } else if (this->cpu == nullptr){
     std::cout << "no current running job" << std::endl;
+  } else {
+    std::cout << "running job does not match request" << std::endl;
   }
 }
 
