@@ -3,6 +3,7 @@
  */
 
 #include <iostream>
+#include <assert.h>
 #include "system.h"
 
 void system_status_test();
