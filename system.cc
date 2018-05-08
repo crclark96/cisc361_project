@@ -24,7 +24,7 @@ System::System(int time,
   this->wait_q = new std::list<Process*>();
   this->complete_q = new std::list<Process*>();
 
-  this->cpu = nullptr;
+  this->cpu = NULL;
 }
 
 int System::get_time(){return this->time;}
@@ -74,7 +74,7 @@ void System::swap_cpu_jobs(){
   /* this function updates which job is being run on the cpu
    * it does not increment the timer
    */
-  if(this->cpu != nullptr){
+  if(this->cpu != NULL){
     if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){
       // if process is done
       this->complete_q->push_back(this->cpu); // add process to complete queue
@@ -90,14 +90,14 @@ void System::swap_cpu_jobs(){
 
 void System::request(int time, int job_num, int dev){
   std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
-  if(this->cpu != nullptr && this->cpu->get_job_num() == job_num){
+  if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
     if(this->get_avail_dev() < dev){
       std::cout << "cannot allocate devices, not enough resources" << std::endl;
     } else {
       this->set_avail_dev(this->get_avail_dev()-dev);
       this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
     }
-  } else if (this->cpu == nullptr){
+  } else if (this->cpu == NULL){
     std::cout << "no current running job" << std::endl;
   } else {
     std::cout << "running job does not match request" << std::endl;
@@ -106,10 +106,10 @@ void System::request(int time, int job_num, int dev){
 
 void System::release(int time, int job_num, int dev){
   std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
-  if(this->cpu != nullptr && this->cpu->get_job_num() == job_num){
+  if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
     this->set_avail_dev(this->get_avail_dev()+dev);
     this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
-  } else if (this->cpu == nullptr){
+  } else if (this->cpu == NULL){
     std::cout << "no current running job" << std::endl;
   } else {
     std::cout << "running job does not match request" << std::endl;
