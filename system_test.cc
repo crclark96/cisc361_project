@@ -8,11 +8,19 @@
 
 void system_status_test();
 void system_getter_test();
+void system_req_rel_test();
 
 int main(){
   system_status_test();
   system_getter_test();
   return 0;
+}
+
+void system_req_rel_test(){
+  System *system = new System(0,15,15,2);
+  system->submit(new Job(1,1,4,3,88,1));
+  system->submit(new Job(2,2,16,1,1,2));
+  system->request(5, 1, 4);
 }
 
 void system_status_test(){
