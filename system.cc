@@ -73,6 +73,9 @@ void System::submit(Job *job){
 }
 
 void System::jump_to_time(int time){
+  if(time <= this->get_time()){
+    return;
+  }
   int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
   // integer division
   for(int i=0; i<num_quantums; i++){
