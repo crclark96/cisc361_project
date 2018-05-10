@@ -10,13 +10,29 @@ void system_status_test();
 void system_getter_test();
 void system_req_rel_test();
 void system_quant_test();
+void system_jump_test();
 
 int main(){
   system_status_test();
   system_getter_test();
   system_req_rel_test();
   system_quant_test();
+  system_jump_test();
   return 0;
+}
+
+void system_jump_test(){
+  System *system = new System(0,15,15,2);
+  system->jump_to_time(3);
+  system->submit(new Job(3,1,15,15,5,1));
+  system->jump_to_time(5);
+  assert(system->get_running_job_num()==1);
+  system->submit(new Job(5,2,10,2,1,1));
+  system->jump_to_time(7);
+  assert(system->get_running_job_num()==1);
+  system->jump_to_time(9);
+  system->status();
+  assert(system->get_running_job_num()==0);
 }
 
 void system_quant_test(){

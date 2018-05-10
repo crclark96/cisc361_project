@@ -67,6 +67,26 @@ void System::submit(Job *job){
     }
   } else {
     this->ready_q->push_back(new Process(job));
+    this->set_avail_mem(this->get_avail_mem() - job->get_mem_req());
+    // subtract available memory from system if adding to ready queue
+  }
+}
+
+void System::jump_to_time(int time){
+  int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
+  // integer division
+  for(int i=0; i<num_quantums; i++){
+    // run quantums until we're almost to time t
+    this->run_quantum();
+  }
+
+  if(this->cpu == NULL){
+    // no jobs queued
+    this->set_time(time);
+  } else {
+    this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
+    // run partial quantum
+    this->set_time(time);
   }
 }
 
@@ -154,12 +174,37 @@ void System::status(){
   std::cout << "dev : " << this->get_avail_dev() << std::endl;
   std::cout << std::endl;
 
+  std::cout << "---------- CPU -------------------------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+            << std::endl;
+  if(this->cpu != NULL){
+    std::cout << std::setw(6)
+              << this->cpu->get_job_num()
+              << "|";
+    std::cout << std::setw(5)
+              << this->cpu->get_arr_time()
+              << "|";
+    std::cout << std::setw(5)
+              << this->cpu->get_mem_req()
+              << "|";
+    std::cout << std::setw(6)
+              << this->cpu->get_max_dev()
+              << "|";
+    std::cout << std::setw(5)
+              << this->cpu->get_run_time()
+              << "|";
+    std::cout << std::setw(5)
+              << this->cpu->get_priority()
+              << "|";
+    std::cout << std::setw(6)
+              << this->cpu->get_alloc_dev()
+              << std::endl;
+  }
 
   std::cout << "------------- Hold Queue 1 -------------"
             << std::endl;
   std::cout << "Job # | Arr | Mem | Dev | Run | Pri "
-            << std::endl;
-  std::cout << "------------------------------------"
             << std::endl;
   std::list<Job*>::iterator it1;
   for(it1=hold_q1->begin();it1!=hold_q1->end();it1++){
@@ -188,8 +233,6 @@ void System::status(){
             << std::endl;
   std::cout << "Job # | Arr | Mem | Dev | Run | Pri "
             << std::endl;
-  std::cout << "------------------------------------"
-            << std::endl;
   for(it1=hold_q2->begin();it1!=hold_q2->end();it1++){
     std::cout << std::setw(6)
               << (*it1)->get_job_num()
@@ -215,8 +258,6 @@ void System::status(){
   std::cout << "------------- Ready Queue --------------"
             << std::endl;
   std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
-            << std::endl;
-  std::cout << "------------------------------------------- "
             << std::endl;
   std::list<Process*>::iterator it2;
   for(it2=ready_q->begin();it2!=ready_q->end();it2++){
@@ -248,8 +289,6 @@ void System::status(){
             << std::endl;
   std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
             << std::endl;
-  std::cout << "------------------------------------------- "
-            << std::endl;
   for(it2=wait_q->begin();it2!=wait_q->end();it2++){
     std::cout << std::setw(6)
               << (*it2)->get_job_num()
@@ -278,8 +317,6 @@ void System::status(){
     std::cout << "------------- Complete Queue -----------"
             << std::endl;
   std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
-            << std::endl;
-  std::cout << "------------------------------------------- "
             << std::endl;
   for(it2=complete_q->begin();it2!=complete_q->end();it2++){
     std::cout << std::setw(6)

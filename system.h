@@ -51,6 +51,8 @@ class System {
   void request(int time, int job_num, int dev);
   void release(int time, int job_num, int dev);
   void run_quantum(); // run current process on cpu for 1 quantum and then swap
+  void jump_to_time(int time); // execute quantums until time t (and partials
+                               // as needed)
 };
 
 #endif
