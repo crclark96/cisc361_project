@@ -123,6 +123,11 @@ void System::swap_cpu_jobs(){
   if(this->cpu != NULL){
     if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){
       // if process is done
+      this->set_avail_dev(this->cpu->get_alloc_dev() + this->get_avail_dev());
+      this->cpu->set_alloc_dev(0);
+      // return devices
+      this->set_avail_mem(this->cpu->get_mem_req() + this->get_avail_mem());
+      // return memory
       this->complete_q->push_back(this->cpu); // add process to complete queue
     } else {
       // otherwise
