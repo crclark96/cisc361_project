@@ -9,27 +9,29 @@
 void system_status_test();
 void system_getter_test();
 void system_req_rel_test();
-void swap_cpu_job_test();
+void system_quant_test();
 
 int main(){
   system_status_test();
   system_getter_test();
   system_req_rel_test();
-  swap_cpu_job_test();
+  system_quant_test();
   return 0;
 }
 
-void swap_cpu_job_test(){
+void system_quant_test(){
   System *system = new System(0,15,15,2);
   assert(system->get_running_job_num()==0);  
-  system->swap_cpu_jobs();
+  system->run_quantum();
   assert(system->get_running_job_num()==0);
   system->submit(new Job(1,1,4,3,88,1));
   system->submit(new Job(2,2,4,4,88,1));
-  system->swap_cpu_jobs();
+  system->run_quantum();
+  // queue process 1, run process 1, queue process 2
+  assert(system->get_running_job_num()==2); 
+  system->run_quantum();
+  // run process 2, queue process 1
   assert(system->get_running_job_num()==1);
-  system->swap_cpu_jobs();
-  assert(system->get_running_job_num()==2);
 }
 
 void system_req_rel_test(){

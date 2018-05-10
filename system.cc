@@ -70,6 +70,29 @@ void System::submit(Job *job){
   }
 }
 
+void System::run_quantum(){
+  // runs process on the cpu for one quantum then swaps
+  if(this->cpu == NULL){
+    // queue up next job
+    this->swap_cpu_jobs();
+    if(this->cpu == NULL){
+      std::cout << "no available jobs to be run" << std::endl;
+      return;
+    }
+  }
+  if(this->cpu->get_elap_time() + this->get_quantum() < this->cpu->get_run_time()){
+    // if this job does not complete in the current quantum
+    this->set_time(this->get_time() + this->get_quantum());
+    this->cpu->set_elap_time(this->cpu->get_elap_time()+this->get_quantum());
+    // increase run time
+  } else {
+    this->set_time(this->get_time() +
+                   (this->cpu->get_run_time() - this->cpu->get_elap_time()));
+    this->cpu->set_elap_time(this->cpu->get_run_time());
+  }
+  this->swap_cpu_jobs();
+}
+
 void System::swap_cpu_jobs(){
   /* this function updates which job is being run on the cpu
    * it does not increment the timer

@@ -25,6 +25,10 @@ class System {
   std::list<Process*> *wait_q;
   std::list<Process*> *complete_q;
   Process* cpu;
+
+  void swap_cpu_jobs(); // moves current process to a queue,
+                        // moves next job to process
+
  public:
   System(int time,
          int tot_mem,
@@ -46,8 +50,7 @@ class System {
   void status();
   void request(int time, int job_num, int dev);
   void release(int time, int job_num, int dev);
-  void swap_cpu_jobs(); // moves current job to a queue, moves next job to cpu
-  
+  void run_quantum(); // run current process on cpu for 1 quantum and then swap
 };
 
 #endif
