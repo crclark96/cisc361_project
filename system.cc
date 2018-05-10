@@ -177,12 +177,32 @@ void System::status(){
 
   std::cout << "---------- System Information ----------"
             << std::endl;
-  std::cout << "time: " << this->get_time() << std::endl;
-  std::cout << "mem : " << this->get_avail_mem() << std::endl;
-  std::cout << "dev : " << this->get_avail_dev() << std::endl;
-  std::cout << std::endl;
+  std::cout << "Time | Tot Mem | Avail Mem | Tot Dev | Avail Dev | Quantum | CPU Job # "
+            << std::endl;
+  std::cout << std::setw(5)
+            << this->get_time()
+            << "|";
+  std::cout << std::setw(9)
+            << this->get_tot_mem()
+            << "|";
+  std::cout << std::setw(11)
+            << this->get_avail_mem()
+            << "|";
+  std::cout << std::setw(9)
+            << this->get_tot_mem()
+            << "|";
+  std::cout << std::setw(11)
+            << this->get_avail_dev()
+            << "|";
+  std::cout << std::setw(9)
+            << this->get_quantum()
+            << "|";
+  std::cout << std::setw(10)
+            << (this->cpu == NULL ? 0 : this->cpu->get_job_num());
+                // 0 if cpu empty
+  std::cout << std::endl << std::endl;
 
-  std::cout << "---------- CPU -------------------------"
+  std::cout << "------------- CPU ----------------------"
             << std::endl;
   std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
             << std::endl;
@@ -212,6 +232,7 @@ void System::status(){
               << this->cpu->get_alloc_dev()
               << std::endl;
   }
+  std::cout << std::endl;
 
   std::cout << "------------- Hold Queue 1 -------------"
             << std::endl;
@@ -238,6 +259,7 @@ void System::status(){
               << (*it1)->get_priority()
               << std::endl;
   }
+  std::cout << std::endl;
 
 
   std::cout << "------------- Hold Queue 2 -------------"
@@ -264,7 +286,7 @@ void System::status(){
               << (*it1)->get_priority()
               << std::endl;
   }
-
+  std::cout << std::endl;
 
   std::cout << "------------- Ready Queue --------------"
             << std::endl;
@@ -297,7 +319,7 @@ void System::status(){
               << (*it2)->get_alloc_dev()
               << std::endl;
   }
-
+  std::cout << std::endl;
 
   std::cout << "------------- Wait Queue ---------------"
             << std::endl;
@@ -330,13 +352,15 @@ void System::status(){
               << (*it2)->get_alloc_dev()
               << std::endl;
   }
-
+  std::cout << std::endl;
+  
   std::cout << "------------- Complete Queue -----------"
             << std::endl;
   std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
             << std::endl;
 
   for(it2=complete_q->begin();it2!=complete_q->end();it2++){
+
     std::cout << std::setw(6)
               << (*it2)->get_job_num()
               << "|";
@@ -346,10 +370,13 @@ void System::status(){
     std::cout << std::setw(5)
               << (*it2)->get_mem_req()
               << "|";
+    std::cout << std::setw(10)
+              << (*it2)->get_elap_time()
+              << "|";
     std::cout << std::setw(6)
               << (*it2)->get_max_dev()
               << "|";
-    std::cout << std::setw(5)
+    std::cout << std::setw(9)
               << (*it2)->get_run_time()
               << "|";
     std::cout << std::setw(5)
@@ -359,5 +386,6 @@ void System::status(){
               << (*it2)->get_alloc_dev()
               << std::endl;
   }
+  std::cout << std::endl;
   
 }
