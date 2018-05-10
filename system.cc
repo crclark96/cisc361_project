@@ -179,7 +179,7 @@ void System::status(){
 
   std::cout << "---------- CPU -------------------------"
             << std::endl;
-  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+  std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
             << std::endl;
   if(this->cpu != NULL){
     std::cout << std::setw(6)
@@ -191,10 +191,13 @@ void System::status(){
     std::cout << std::setw(5)
               << this->cpu->get_mem_req()
               << "|";
+    std::cout << std::setw(10)
+              << this->cpu->get_elap_time()
+              << "|";
     std::cout << std::setw(6)
               << this->cpu->get_max_dev()
               << "|";
-    std::cout << std::setw(5)
+    std::cout << std::setw(9)
               << this->cpu->get_run_time()
               << "|";
     std::cout << std::setw(5)
@@ -260,7 +263,7 @@ void System::status(){
 
   std::cout << "------------- Ready Queue --------------"
             << std::endl;
-  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+  std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
             << std::endl;
   std::list<Process*>::iterator it2;
   for(it2=ready_q->begin();it2!=ready_q->end();it2++){
@@ -273,10 +276,13 @@ void System::status(){
     std::cout << std::setw(5)
               << (*it2)->get_mem_req()
               << "|";
+    std::cout << std::setw(10)
+              << (*it2)->get_elap_time()
+              << "|";
     std::cout << std::setw(6)
               << (*it2)->get_max_dev()
               << "|";
-    std::cout << std::setw(5)
+    std::cout << std::setw(9)
               << (*it2)->get_run_time()
               << "|";
     std::cout << std::setw(5)
@@ -288,9 +294,10 @@ void System::status(){
   }
 
 
-    std::cout << "------------- Wait Queue ---------------"
+  std::cout << "------------- Wait Queue ---------------"
             << std::endl;
-  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
+  
+  std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
             << std::endl;
   for(it2=wait_q->begin();it2!=wait_q->end();it2++){
     std::cout << std::setw(6)
@@ -302,10 +309,13 @@ void System::status(){
     std::cout << std::setw(5)
               << (*it2)->get_mem_req()
               << "|";
+    std::cout << std::setw(10)
+              << (*it2)->get_elap_time()
+              << "|";
     std::cout << std::setw(6)
               << (*it2)->get_max_dev()
               << "|";
-    std::cout << std::setw(5)
+    std::cout << std::setw(9)
               << (*it2)->get_run_time()
               << "|";
     std::cout << std::setw(5)
@@ -316,11 +326,11 @@ void System::status(){
               << std::endl;
   }
 
+  std::cout << "------------- Complete Queue -----------"
+            << std::endl;
+  std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
+            << std::endl;
 
-    std::cout << "------------- Complete Queue -----------"
-            << std::endl;
-  std::cout << "Job # | Arr | Mem | MDev | Run | Pri | ADev "
-            << std::endl;
   for(it2=complete_q->begin();it2!=complete_q->end();it2++){
     std::cout << std::setw(6)
               << (*it2)->get_job_num()
