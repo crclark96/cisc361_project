@@ -35,7 +35,6 @@ int main(int argc, const char* argv[]){
     switch((char)line[0]){
     case 'C' :
       std::istringstream(split_line[1]) >> t;
-      system->jump_to_time(t);
       system = process_config(split_line);
       break;
     case 'A' :
