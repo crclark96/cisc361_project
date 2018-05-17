@@ -189,7 +189,7 @@ void System::status(){
             << this->get_avail_mem()
             << "|";
   std::cout << std::setw(9)
-            << this->get_tot_mem()
+            << this->get_tot_dev()
             << "|";
   std::cout << std::setw(11)
             << this->get_avail_dev()
