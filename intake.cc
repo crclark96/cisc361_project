@@ -34,11 +34,15 @@ int main(int argc, const char* argv[]){
     int t, j, d;
     switch((char)line[0]){
     case 'C' :
+      std::istringstream(split_line[1]) >> t;
+      system->jump_to_time(t);
       system = process_config(split_line);
       break;
     case 'A' :
       job_arrive = process_arrival(split_line);
       if(job_arrive->get_mem_req() <= system->get_tot_mem()){
+        std::istringstream(split_line[1]) >> t;
+        system->jump_to_time(t);
         system->submit(job_arrive);
       }
       else{
@@ -53,6 +57,7 @@ int main(int argc, const char* argv[]){
             << " job number: " << j 
             << " devices: " << d 
             << std::endl;
+      system->jump_to_time(t);
       system->request(t, j, d);
       break;
     case 'L' :
@@ -63,6 +68,7 @@ int main(int argc, const char* argv[]){
             << " job number: " << j 
             << " devices: " << d 
             << std::endl;
+      system->jump_to_time(t);
       system->release(t, j, d);
       break;
     case 'D' :

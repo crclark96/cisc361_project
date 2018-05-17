@@ -99,7 +99,7 @@ void System::run_quantum(){
     // queue up next job
     this->swap_cpu_jobs();
     if(this->cpu == NULL){
-      std::cout << "no available jobs to be run" << std::endl;
+      //std::cout << "no available jobs to be run" << std::endl;
       return;
     }
   }
