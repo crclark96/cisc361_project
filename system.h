@@ -48,6 +48,7 @@ class System {
   void submit(Job *job);
   void update();
   void status();
+  void dump_json();
   void request(int time, int job_num, int dev);
   void release(int time, int job_num, int dev);
   void run_quantum(); // run current process on cpu for 1 quantum and then swap

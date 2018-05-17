@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g 
+CFLAGS = -std=c++98 -g
 OBJS = system.o job.o process.o
 TESTS = system_test intake_test
 
@@ -19,4 +19,4 @@ intake_test: intake.o $(OBJS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm *.o
+	rm *.o D*.json
