@@ -43,9 +43,9 @@ void System::set_avail_dev(int devices){this->avail_dev = devices;}
 bool sort_hold_q1(Job *job1, Job *job2){
   // sorting function for hold queue 1
   if(job1->get_run_time() == job2->get_run_time()){
-    return job1->get_arr_time() < job2->get_arr_time();  // SJF
+    return job1->get_arr_time() < job2->get_arr_time();  // FIFO
   } else {
-    return job1->get_run_time() < job2->get_run_time();  // FIFO
+    return job1->get_run_time() < job2->get_run_time();  // SJF
   }
 }
 
