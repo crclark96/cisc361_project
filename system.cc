@@ -123,14 +123,13 @@ void System::jump_to_time(int time){
 }
 
 void System::run_quantum(){
-  // runs process on the cpu for one quantum then swaps
+  // swap next job onto the cpu then run for one quantum
+  // queue up next job
+  this->swap_cpu_jobs();
   if(this->cpu == NULL){
-    // queue up next job
-    this->swap_cpu_jobs();
-    if(this->cpu == NULL){
       //std::cout << "no available jobs to be run" << std::endl;
-      return;
-    }
+    this->set_time(this->get_time() + this->get_quantum());
+    return;
   }
   if(this->cpu->get_elap_time() + this->get_quantum() < this->cpu->get_run_time()){
     // if this job does not complete in the current quantum
@@ -142,7 +141,6 @@ void System::run_quantum(){
                    (this->cpu->get_run_time() - this->cpu->get_elap_time()));
     this->cpu->set_elap_time(this->cpu->get_run_time());
   }
-  this->swap_cpu_jobs();
 }
 
 void System::swap_cpu_jobs(){
