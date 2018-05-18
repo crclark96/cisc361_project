@@ -28,6 +28,7 @@ class Process{
   int get_priority();
   int get_compl_time();
   int get_turnaround_time();
+  float get_weighted_turnaround_time();
 };
 
 #endif

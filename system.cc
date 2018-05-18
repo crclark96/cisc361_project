@@ -365,7 +365,7 @@ void System::status(){
   
   std::cout << "------------- Complete Queue -----------"
             << std::endl;
-  std::cout << "Job # | Arr | Mem | Exectime | MDev | Runtime | Pri | ADev "
+  std::cout << "Job # | Arr | Mem | MDev | Runtime | Pri | Compl Time | TAT | WTAT"
             << std::endl;
 
   for(it2=complete_q->begin();it2!=complete_q->end();it2++){
@@ -379,9 +379,6 @@ void System::status(){
     std::cout << std::setw(5)
               << (*it2)->get_mem_req()
               << "|";
-    std::cout << std::setw(10)
-              << (*it2)->get_elap_time()
-              << "|";
     std::cout << std::setw(6)
               << (*it2)->get_max_dev()
               << "|";
@@ -391,8 +388,14 @@ void System::status(){
     std::cout << std::setw(5)
               << (*it2)->get_priority()
               << "|";
+    std::cout << std::setw(12)
+              << (*it2)->get_compl_time()
+              << "|";
+    std::cout << std::setw(5)
+              << (*it2)->get_turnaround_time()
+              << "|";
     std::cout << std::setw(6)
-              << (*it2)->get_alloc_dev()
+              << (*it2)->get_weighted_turnaround_time()
               << std::endl;
   }
   std::cout << std::endl;
@@ -556,6 +559,11 @@ void System::dump_json(){
     fh << "      \"allocated_devices\": " << (*it2)->get_alloc_dev()
        << std::endl;
     fh << "      \"elapsed_time\": " << (*it2)->get_elap_time()
+       << std::endl;
+    fh << "      \"turnaround_time\": " << (*it2)->get_turnaround_time()
+       << std::endl;
+    fh << "      \"weighted_turnaround_time\": "
+       << (*it2)->get_weighted_turnaround_time()
        << std::endl;
     fh << "    }," << std::endl;
   }
