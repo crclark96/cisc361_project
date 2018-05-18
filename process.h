@@ -27,6 +27,7 @@ class Process{
   int get_run_time();
   int get_priority();
   int get_compl_time();
+  int get_turnaround_time();
 };
 
 #endif
