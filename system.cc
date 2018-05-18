@@ -4,7 +4,9 @@
 
 #include <fstream>
 #include <iostream>
-#include <ostringstream>
+#include <iomanip>
+#include <locale>
+#include <sstream>
 #include <iomanip>
 #include <string>
 #include "system.h"
@@ -405,12 +407,14 @@ void System::dump_json(){
   std::list<Process*>::iterator it2;
 
   std::ofstream fh;
+
   std::string get_time_string;
   std::ostringstream convert;
   convert << this->get_time();
-  get_time_string = convert.str();
-
-  fh.open("D"+std::to_string(this->get_time())+".json");
+  get_time_string.append("D");
+  get_time_string.append(convert.str());
+  get_time_string.append(".json");
+  fh.open(get_time_string.c_str(), std::ofstream::out | std::ofstream::app);
 
   fh << "{" << std::endl;
   fh << "  \"current_time\": " << (this->get_time())
