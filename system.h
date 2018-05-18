@@ -41,6 +41,8 @@ class System {
   int get_avail_dev();
   int get_quantum();
   int get_running_job_num();
+  float get_avg_turnaround_time();
+  float get_avg_weighted_turnaround_time();
   void set_time(int time);
   void set_avail_dev(int devices);
   void set_avail_mem(int memory);

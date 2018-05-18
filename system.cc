@@ -39,6 +39,28 @@ int System::get_tot_dev(){return this->tot_dev;}
 int System::get_avail_dev(){return this->avail_dev;}
 int System::get_quantum(){return this->quantum;}
 int System::get_running_job_num(){return this->cpu==NULL?0:this->cpu->get_job_num();}
+float System::get_avg_turnaround_time(){
+  int sum, n = 0;
+  std::list<Process*>::iterator it;
+  for(it = this->complete_q->begin();it != this->complete_q->end(); it++){
+    sum += (*it)->get_turnaround_time();
+    n++;
+  }
+  return n < 1
+             ? -1
+             : (float)sum / (float)n;
+}
+float System::get_avg_weighted_turnaround_time(){
+  float sum, n = 0;
+  std::list<Process*>::iterator it;
+  for(it = this->complete_q->begin();it != this->complete_q->end(); it++){
+    sum += (*it)->get_weighted_turnaround_time();
+    n++;
+  }
+  return n < 1
+             ? -1
+             : sum / n;
+}
 void System::set_time(int time){this->time = time;}
 void System::set_avail_mem(int memory){this->avail_mem = memory;}
 void System::set_avail_dev(int devices){this->avail_dev = devices;}
@@ -186,7 +208,7 @@ void System::status(){
 
   std::cout << "---------- System Information ----------"
             << std::endl;
-  std::cout << "Time | Tot Mem | Avail Mem | Tot Dev | Avail Dev | Quantum | CPU Job # "
+  std::cout << "Time | Tot Mem | Avail Mem | Tot Dev | Avail Dev | Quantum | CPU Job #"
             << std::endl;
   std::cout << std::setw(5)
             << this->get_time()
@@ -210,6 +232,15 @@ void System::status(){
             << (this->cpu == NULL ? 0 : this->cpu->get_job_num());
                 // 0 if cpu empty
   std::cout << std::endl << std::endl;
+  std::cout << std::setw(30)
+            << "avg turnaround time: "
+            << this->get_avg_turnaround_time()
+            << std::endl;
+  std::cout << std::setw(30)
+            << "avg weighted turnaround time: "
+            << this->get_avg_weighted_turnaround_time()
+            << std::endl << std::endl;
+
 
   std::cout << "------------- CPU ----------------------"
             << std::endl;
@@ -428,7 +459,11 @@ void System::dump_json(){
      << "," << std::endl;
   fh << "  \"quantum\": " << (this->get_quantum())
      << "," << std::endl;
-  fh << "  \"turnaround\": ," <<  std::endl;
+  fh << "  \"avg_turnaround\": " << (this->get_avg_turnaround_time())
+     << "," << std::endl;
+  fh << "  \"avg_weighted_turnaround\": "
+     << (this->get_avg_weighted_turnaround_time())
+     << "," << std::endl;
 
   fh << "  \"readyq\": [" << std::endl;
   for(it2=this->ready_q->begin();it2!=this->ready_q->end();it2++){
