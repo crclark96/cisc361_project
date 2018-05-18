@@ -417,7 +417,7 @@ void System::dump_json(){
   get_time_string.append("D");
   get_time_string.append(convert.str());
   get_time_string.append(".json");
-  fh.open(get_time_string.c_str(), std::ofstream::out | std::ofstream::app);
+  fh.open(get_time_string.c_str(), std::ofstream::out | std::ofstream::trunc);
 
   fh << "{" << std::endl;
   fh << "  \"current_time\": " << (this->get_time())
