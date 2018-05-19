@@ -281,6 +281,8 @@ bool System::is_safe(){
 //GO NO FURTHER
 void System::status(){
 
+  std::cout << std::endl << std::endl;
+  
   std::cout << "---------- System Information ----------"
             << std::endl;
   std::cout << "Time | Tot Mem | Avail Mem | Tot Dev | Avail Dev | Quantum | CPU Job #"
