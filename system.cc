@@ -154,30 +154,52 @@ void System::complete_job(int time, int job_num){
     // set process completion time
     this->cpu->set_compl_time(this->get_time());
     this->complete_q->push_back(this->cpu); // add process to complete queue
-    
-    std::list<Process*>::iterator it;
-    for(it = this->wait_q->begin(); it != this->wait_q->end(); it++){
+
+    // check wait q
+    std::list<Process*>::iterator it1;
+    for(it1 = this->wait_q->begin(); it1 != this->wait_q->end(); it1++){
       // if we have the available devices
-      if((*it)->get_needed_dev() <= this->get_avail_dev()){
+      if((*it1)->get_needed_dev() <= this->get_avail_dev()){
         // pretend to allocate devices
-        (*it)->set_alloc_dev((*it)->get_alloc_dev() + (*it)->get_needed_dev());
-        this->set_avail_dev(this->get_avail_dev() - (*it)->get_needed_dev());
+        (*it1)->set_alloc_dev((*it1)->get_alloc_dev() + (*it1)->get_needed_dev());
+        this->set_avail_dev(this->get_avail_dev() - (*it1)->get_needed_dev());
   
         // check if in unsafe state
         if(!this->is_safe()){
           // return devices
-          (*it)->set_alloc_dev((*it)->get_alloc_dev() - (*it)->get_needed_dev());
-          this->set_avail_dev(this->get_avail_dev() + (*it)->get_needed_dev());
+          (*it1)->set_alloc_dev((*it1)->get_alloc_dev() - (*it1)->get_needed_dev());
+          this->set_avail_dev(this->get_avail_dev() + (*it1)->get_needed_dev());
           // check next in wait queue
           continue; 
         } else {
           // set needed devices to 0
-          (*it)->set_needed_dev(0);
+          (*it1)->set_needed_dev(0);
           // add to ready q
-          this->ready_q->push_back(*it);
+          this->ready_q->push_back(*it1);
           // remove from wait q
-          this->wait_q->erase(it);
+          this->wait_q->erase(it1);
         }
+      }
+    }
+
+    std::list<Job*>::iterator it2;
+    // check hold q 1
+    for(it2 = this->hold_q1->begin(); it2 != hold_q1->end(); it2++){
+      // check memory
+      if((*it2)->get_mem_req() <= this->get_avail_mem()){
+        // add process to ready q
+        this->ready_q->push_back(new Process(*it2));
+        this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
+      }
+    }
+
+    // check hold q 2
+    for(it2 = this->hold_q2->begin(); it2 != hold_q2->end(); it2++){
+      // check memory
+      if((*it2)->get_mem_req() <= this->get_avail_mem()){
+        // add process to ready q
+        this->ready_q->push_back(new Process(*it2));
+        this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
       }
     }
     
@@ -214,6 +236,8 @@ void System::request(int time, int job_num, int dev){
   if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
     if(this->get_avail_dev() < dev){
       std::cout << "cannot allocate devices, not enough resources" << std::endl;
+    } else if (this->cpu->get_max_dev() < this->cpu->get_alloc_dev() + dev) {
+      std::cout << "process requesting more devices than declared" << std::endl;
     } else {
       // pretend to allocate devices
       this->set_avail_dev(this->get_avail_dev()-dev);
