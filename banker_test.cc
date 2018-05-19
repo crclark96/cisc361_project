@@ -6,6 +6,8 @@
 #include "system.h"
 #include <iostream>
 
+void request_test();
+
 int main(int argc, const char* argv[]){
   System* system = new System(1, 200, 12, 4); //the initial values of the test
 
@@ -46,5 +48,22 @@ int main(int argc, const char* argv[]){
   system->is_safe();
 
   system->status();
+  request_test();
+}
 
+void request_test(){
+  System *system = new System(0, 100, 4, 2);
+  system->submit(new Job(0, 1, 10, 4, 5, 1));
+  system->submit(new Job(0, 2, 10, 4, 5, 1));
+
+  system->jump_to_time(1);
+  system->request(1, 1, 2); // job 1 requests 2 devices
+  system->status();    
+  assert(system->is_safe() == true);
+
+  system->jump_to_time(2);
+  system->request(2, 2, 2); // job 2 requests 2 devices
+  system->status();
+  assert(system->is_safe() == false);
+                 
 }
