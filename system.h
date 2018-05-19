@@ -44,6 +44,7 @@ class System {
   void set_time(int time);
   void set_avail_dev(int devices);
   void set_avail_mem(int memory);
+  bool is_safe();
 
   void submit(Job *job);
   void update();
