@@ -11,13 +11,15 @@ class Process{
   Job *job;
   int alloc_dev,
     elap_time,
-    compl_time;
+    compl_time,
+    needed_dev;
 
  public:
   Process(Job *job);
   void set_alloc_dev(int dev);
   void set_elap_time(int time);
   void set_compl_time(int time);
+  void set_needed_dev(int dev);
   int get_alloc_dev();
   int get_elap_time();
   int get_arr_time();
@@ -29,6 +31,7 @@ class Process{
   int get_compl_time();
   int get_turnaround_time();
   float get_weighted_turnaround_time();
+  int get_needed_dev();
 };
 
 #endif

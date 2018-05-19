@@ -65,6 +65,7 @@ void request_test(){
   system->jump_to_time(2);
   system->request(2, 2, 2); // job 2 requests 2 devices
   system->status();
-  assert(system->is_safe() == false);
+  // should not allocate unsafe resources
+  assert(system->is_safe() == true);
                  
 }

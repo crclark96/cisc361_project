@@ -58,6 +58,7 @@ class System {
                          get new job, run that job for one quantum */
   void jump_to_time(int time); // execute quantums until time t (and partials
                                // as needed)
+  void complete_job(int time, int job_num);
 };
 
 #endif

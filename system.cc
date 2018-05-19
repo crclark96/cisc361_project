@@ -144,21 +144,57 @@ void System::run_quantum(){
   }
 }
 
+void System::complete_job(int time, int job_num){
+  if(this->cpu->get_job_num() == job_num){
+    // return devices
+    this->set_avail_dev(this->cpu->get_alloc_dev() + this->get_avail_dev());
+    this->cpu->set_alloc_dev(0);
+    // return memory
+    this->set_avail_mem(this->cpu->get_mem_req() + this->get_avail_mem());
+    // set process completion time
+    this->cpu->set_compl_time(this->get_time());
+    this->complete_q->push_back(this->cpu); // add process to complete queue
+    
+    std::list<Process*>::iterator it;
+    for(it = this->wait_q->begin(); it != this->wait_q->end(); it++){
+      // if we have the available devices
+      if((*it)->get_needed_dev() <= this->get_avail_dev()){
+        // pretend to allocate devices
+        (*it)->set_alloc_dev((*it)->get_alloc_dev() + (*it)->get_needed_dev());
+        this->set_avail_dev(this->get_avail_dev() - (*it)->get_needed_dev());
+  
+        // check if in unsafe state
+        if(!this->is_safe()){
+          // return devices
+          (*it)->set_alloc_dev((*it)->get_alloc_dev() - (*it)->get_needed_dev());
+          this->set_avail_dev(this->get_avail_dev() + (*it)->get_needed_dev());
+          // check next in wait queue
+          continue; 
+        } else {
+          // set needed devices to 0
+          (*it)->set_needed_dev(0);
+          // add to ready q
+          this->ready_q->push_back(*it);
+          // remove from wait q
+          this->wait_q->erase(it);
+        }
+      }
+    }
+    
+  } else {
+    std::cout << "cannot complete job that is not running" << std::endl;
+  }
+  
+}
+
 void System::swap_cpu_jobs(){
   /* this function updates which job is being run on the cpu
    * it does not increment the timer
    */
   if(this->cpu != NULL){
-  // if process is done
+    // if process is done
     if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){  
-      // return devices
-      this->set_avail_dev(this->cpu->get_alloc_dev() + this->get_avail_dev());
-      this->cpu->set_alloc_dev(0);
-      // return memory
-      this->set_avail_mem(this->cpu->get_mem_req() + this->get_avail_mem());
-      // set process completion time
-      this->cpu->set_compl_time(this->get_time());
-      this->complete_q->push_back(this->cpu); // add process to complete queue
+      this->complete_job(this->get_time(), this->cpu->get_job_num());
     } else {
       // otherwise
       this->ready_q->push_back(this->cpu); // add process to back of ready queue
@@ -188,6 +224,8 @@ void System::request(int time, int job_num, int dev){
         // return devices
         this->set_avail_dev(this->get_avail_dev() + dev);
         this->cpu->set_alloc_dev(this->cpu->get_alloc_dev() - dev);
+        // remember how many devices we need
+        this->cpu->set_needed_dev(dev);
         // add job to back of wait queue
         this->wait_q->push_back(this->cpu);
       }

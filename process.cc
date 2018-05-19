@@ -15,6 +15,7 @@ Process::Process(Job *job){
 void Process::set_alloc_dev(int dev){this->alloc_dev = dev;}
 void Process::set_elap_time(int time){this->elap_time = time;}
 void Process::set_compl_time(int time){this->compl_time = time;}
+void Process::set_needed_dev(int dev){this->needed_dev = dev;}
 int Process::get_alloc_dev(){return this->alloc_dev;}
 int Process::get_elap_time(){return this->elap_time;}
 int Process::get_arr_time(){return this->job->get_arr_time();}
@@ -24,6 +25,7 @@ int Process::get_max_dev(){return this->job->get_max_dev();}
 int Process::get_run_time(){return this->job->get_run_time();}
 int Process::get_priority(){return this->job->get_priority();}
 int Process::get_compl_time(){return this->compl_time;}
+int Process::get_needed_dev(){return this->needed_dev;}
 int Process::get_turnaround_time(){
   return this->compl_time == -1  
     ? -1  // if job is not complete return -1
