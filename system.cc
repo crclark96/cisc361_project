@@ -242,7 +242,7 @@ bool System::is_safe(){
     for (int p = 0; p < P; p++){
       if (finish[p] == 0){
         if (need[p] > work){
-          break;
+          continue;
         }
         work += alloc[p];
         // Add this process to safe sequence.
