@@ -102,22 +102,24 @@ void System::submit(Job *job){
 
 void System::jump_to_time(int time){
   if(time <= this->get_time()){
-  return;
+    return;
   }
   int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
   // integer division
   for(int i=0; i<num_quantums; i++){
   // run quantums until we're almost to time t
-  this->run_quantum();
+    this->run_quantum();
   }
 
+  this->swap_cpu_jobs();
+  
   if(this->cpu == NULL){
-  // no jobs queued
-  this->set_time(time);
+    // no jobs queued
+    this->set_time(time);
   } else {
-  this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
-  // run partial quantum
-  this->set_time(time);
+    this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
+    // run partial quantum
+    this->set_time(time);
   }
 }
 
@@ -148,54 +150,54 @@ void System::swap_cpu_jobs(){
    */
   if(this->cpu != NULL){
   // if process is done
-  if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){  
-    // return devices
-    this->set_avail_dev(this->cpu->get_alloc_dev() + this->get_avail_dev());
-    this->cpu->set_alloc_dev(0);
-    // return memory
-    this->set_avail_mem(this->cpu->get_mem_req() + this->get_avail_mem());
-    // set process completion time
-    this->cpu->set_compl_time(this->get_time());
-    this->complete_q->push_back(this->cpu); // add process to complete queue
-  } else {
-    // otherwise
-    this->ready_q->push_back(this->cpu); // add process to back of ready queue
-  }
+    if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){  
+      // return devices
+      this->set_avail_dev(this->cpu->get_alloc_dev() + this->get_avail_dev());
+      this->cpu->set_alloc_dev(0);
+      // return memory
+      this->set_avail_mem(this->cpu->get_mem_req() + this->get_avail_mem());
+      // set process completion time
+      this->cpu->set_compl_time(this->get_time());
+      this->complete_q->push_back(this->cpu); // add process to complete queue
+    } else {
+      // otherwise
+      this->ready_q->push_back(this->cpu); // add process to back of ready queue
+    }
   }
   // move next job to cpu
   if(!this->ready_q->empty()){
-  this->cpu=this->ready_q->front();
-  this->ready_q->pop_front();
+    this->cpu=this->ready_q->front();
+    this->ready_q->pop_front();
   } else {
-  this->cpu=NULL;
+    this->cpu=NULL;
   }
 }
 
 void System::request(int time, int job_num, int dev){
   std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
   if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
-  if(this->get_avail_dev() < dev){
-    std::cout << "cannot allocate devices, not enough resources" << std::endl;
+    if(this->get_avail_dev() < dev){
+      std::cout << "cannot allocate devices, not enough resources" << std::endl;
+    } else {
+      this->set_avail_dev(this->get_avail_dev()-dev);
+      this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
+    }
+    } else if (this->cpu == NULL){
+    std::cout << "no current running job" << std::endl;
   } else {
-    this->set_avail_dev(this->get_avail_dev()-dev);
-    this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
-  }
-  } else if (this->cpu == NULL){
-  std::cout << "no current running job" << std::endl;
-  } else {
-  std::cout << "running job does not match request" << std::endl;
+    std::cout << "running job does not match request" << std::endl;
   }
 }
 
 void System::release(int time, int job_num, int dev){
   std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
   if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
-  this->set_avail_dev(this->get_avail_dev()+dev);
-  this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
+    this->set_avail_dev(this->get_avail_dev()+dev);
+    this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
   } else if (this->cpu == NULL){
-  std::cout << "no current running job" << std::endl;
+    std::cout << "no current running job" << std::endl;
   } else {
-  std::cout << "running job does not match request" << std::endl;
+    std::cout << "running job does not match request" << std::endl;
   }
 }
 
@@ -215,13 +217,13 @@ bool System::is_safe(){
       alloc[i] = (*iter)->get_alloc_dev();
       j_nums[i] = (*iter)->get_job_num();
       i++;
-    }
+  }
   for (iter=this->wait_q->begin();iter!=this->wait_q->end();iter++){
       need[i] = (*iter)->get_max_dev() - (*iter)->get_alloc_dev();
       alloc[i] = (*iter)->get_alloc_dev();
       j_nums[i] = (*iter)->get_job_num();
       i++;
-    }
+  }
   if(this->cpu != NULL){
     need[i] = this->cpu->get_max_dev() - this->cpu->get_alloc_dev();
     alloc[i] = this->cpu->get_alloc_dev();
