@@ -6,7 +6,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <iomanip>
 #include <string>
 #include <stdlib.h>
 #include "system.h"
@@ -233,7 +232,7 @@ bool System::is_safe(){
 
   int* safeSeq = (int*) calloc(P, sizeof(int));
 
-  int work = this->avail_mem;
+  int work = this->get_avail_dev();
 
   int count = 0;
   while (count < P){

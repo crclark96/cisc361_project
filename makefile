@@ -23,4 +23,4 @@ banker_test: banker_test.o $(OBJS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm *.o D*.json
+	rm *.o D*.json $(TESTS)
