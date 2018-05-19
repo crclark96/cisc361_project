@@ -179,8 +179,18 @@ void System::request(int time, int job_num, int dev){
     if(this->get_avail_dev() < dev){
       std::cout << "cannot allocate devices, not enough resources" << std::endl;
     } else {
+      // pretend to allocate devices
       this->set_avail_dev(this->get_avail_dev()-dev);
       this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
+      if(this->is_safe()){
+        return;
+      } else {
+        // return devices
+        this->set_avail_dev(this->get_avail_dev() + dev);
+        this->cpu->set_alloc_dev(this->cpu->get_alloc_dev() - dev);
+        // add job to back of wait queue
+        this->wait_q->push_back(this->cpu);
+      }
     }
     } else if (this->cpu == NULL){
     std::cout << "no current running job" << std::endl;
