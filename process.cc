@@ -25,8 +25,13 @@ int Process::get_run_time(){return this->job->get_run_time();}
 int Process::get_priority(){return this->job->get_priority();}
 int Process::get_compl_time(){return this->compl_time;}
 int Process::get_turnaround_time(){
-  return this->compl_time == -1
-    ? -1
+  return this->compl_time == -1  
+    ? -1  // if job is not complete return -1
     : this->get_compl_time() - this->get_arr_time();
+}
+float Process::get_weighted_turnaround_time(){
+  return this->compl_time == -1
+    ? -1 // if job is not complete return -1
+    : (float)this->get_turnaround_time() / (float)this->get_run_time();
 }
 

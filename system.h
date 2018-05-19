@@ -41,6 +41,8 @@ class System {
   int get_avail_dev();
   int get_quantum();
   int get_running_job_num();
+  float get_avg_turnaround_time();
+  float get_avg_weighted_turnaround_time();
   void set_time(int time);
   void set_avail_dev(int devices);
   void set_avail_mem(int memory);
@@ -52,7 +54,8 @@ class System {
   void dump_json();
   void request(int time, int job_num, int dev);
   void release(int time, int job_num, int dev);
-  void run_quantum(); // run current process on cpu for 1 quantum and then swap
+  void run_quantum(); /* move current job to back of ready queue,
+                         get new job, run that job for one quantum */
   void jump_to_time(int time); // execute quantums until time t (and partials
                                // as needed)
 };

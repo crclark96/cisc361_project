@@ -32,7 +32,7 @@ void system_jump_test(){
   assert(system->get_running_job_num()==1);
   system->jump_to_time(9);
   system->status();
-  assert(system->get_running_job_num()==0);
+  assert(system->get_running_job_num()==1);
 }
 
 void system_quant_test(){
@@ -43,11 +43,11 @@ void system_quant_test(){
   system->submit(new Job(1,1,4,3,88,1));
   system->submit(new Job(2,2,4,4,88,1));
   system->run_quantum();
-  // queue process 1, run process 1, queue process 2
-  assert(system->get_running_job_num()==2); 
+  // queue process 1, run process 1
+  assert(system->get_running_job_num()==1); 
   system->run_quantum();
-  // run process 2, queue process 1
-  assert(system->get_running_job_num()==1);
+  // queue process 2, run it
+  assert(system->get_running_job_num()==2);
 }
 
 void system_req_rel_test(){
