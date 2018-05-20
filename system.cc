@@ -29,6 +29,7 @@ System::System(int time,
   this->complete_q = new std::list<Process*>();
 
   this->cpu = NULL;
+  this->remaining_quantum = 0;
 }
 
 int System::get_time(){return this->time;}
@@ -103,24 +104,38 @@ void System::submit(Job *job){
 }
 
 void System::jump_to_time(int time){
+  std::cout << "time: " << time << " system time: " << this->get_time()
+            << " remaining quant: " << this->get_remaining_quantum()
+            << std::endl;
+  
   if(time <= this->get_time()){
     return;
   }
+  if(this->cpu == NULL){
+    // don't try to finish a quantum if nothing's running
+    this->set_remaining_quantum(0);
+    std::cout << "nothing running, not finishing quantum" << std::endl;
+  }
+  
   if(get_remaining_quantum()){ //if still in a quantum
+    std::cout << "we're still in a running quantum" << std::endl;
     if(this->get_remaining_quantum() <= (time - this->get_time())){ //time is more than remaining quantum
+      std::cout << "finishing quantum" << std::endl;
       continue_quantum(this->get_remaining_quantum());
-      this->set_time(this->get_time() + this->get_remaining_quantum());
       this->set_remaining_quantum(0);
     }
     else{
+      std::cout << "not finishing quantum" << std::endl;
+      this->set_remaining_quantum(this->get_remaining_quantum()
+                                  -(time - this->get_time()));
       continue_quantum((time - this->get_time()));
-      this->set_remaining_quantum(this->get_remaining_quantum()-(time - this->get_time()));
       return;
     }
   }
   int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
   // integer division
-  this->set_remaining_quantum((time - this->get_time()) % this->get_quantum());
+  this->set_remaining_quantum(this->get_quantum() -
+                              ((time - this->get_time()) % this->get_quantum()));
 
   for(int i=0; i<num_quantums; i++){
   // run quantums until we're almost to time t
