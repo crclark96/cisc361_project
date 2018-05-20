@@ -161,14 +161,14 @@ void System::run_quantum(){
     return;
   }
   if(this->cpu->get_elap_time() + this->get_quantum() < this->cpu->get_run_time()){
-  // if this job does not complete in the current quantum
-  this->set_time(this->get_time() + this->get_quantum());
-  this->cpu->set_elap_time(this->cpu->get_elap_time()+this->get_quantum());
-  // increase run time
+    // if this job does not complete in the current quantum
+    this->set_time(this->get_time() + this->get_quantum());
+    this->cpu->set_elap_time(this->cpu->get_elap_time()+this->get_quantum());
+    // increase run time
   } else {
-  this->set_time(this->get_time() +
-           (this->cpu->get_run_time() - this->cpu->get_elap_time()));
-  this->cpu->set_elap_time(this->cpu->get_run_time());
+    this->set_time(this->get_time() +
+                   (this->cpu->get_run_time() - this->cpu->get_elap_time()));
+    this->cpu->set_elap_time(this->cpu->get_run_time());
   }
 }
 
