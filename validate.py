@@ -25,8 +25,15 @@ def validate(output, expected):
             if calc[key] != given[key]:
                 print "output value for " + key + " is " + str(calc[key]) \
                     + " but should be " + str(given[key])
-
-            
+        if given[key] in ["readyq", "submitq", "holdq2", "holdq1",
+                                "completeq", "waitq"]:
+            for i in range(len(calc[key])):
+                if calc[key][i] not in given[key]:
+                    print "job # " + str(calc[key][i]) + " not expected in " \
+                    + str(given[key])
+        
+        
+                    
 if __name__ == "__main__":
     for i in range(len(results[0])):
         validate(results[0][i],results[1][i])
