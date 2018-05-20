@@ -601,11 +601,11 @@ void System::dump_json(){
 
   fh << "{" << std::endl;
   fh << "  \"current_time\": " << (this->get_time())
-   << "," << std::endl;
+     << "," << std::endl;
   fh << "  \"total_memory\": " << (this->get_tot_mem())
-   << "," << std::endl;
+     << "," << std::endl;
   fh << "  \"available_memory\": " << (this->get_avail_mem())
-   << "," << std::endl;
+     << "," << std::endl;
   fh << "  \"quantum\": " << (this->get_quantum())
      << "," << std::endl;
   fh << "  \"avg_turnaround\": " << (this->get_avg_turnaround_time())
@@ -615,165 +615,228 @@ void System::dump_json(){
      << "," << std::endl;
 
   fh << "  \"readyq\": [" << std::endl;
+  
   for(it2=this->ready_q->begin();it2!=this->ready_q->end();it2++){
-  fh << "  " << ((*it2)->get_job_num()) << "," << std::endl;
+    fh << "  " << ((*it2)->get_job_num());
+    if((*it2) != this->ready_q->back()){
+      fh << ",";
+    }
+    fh << std::endl;
   }
   fh << "  ]," << std::endl;
-
+  
   fh << "  \"running\": " << (this->cpu==NULL?0:this->cpu->get_job_num())
-   << "," << std::endl;
-
+     << "," << std::endl;
+  
   fh << "  \"holdq2\": [" << std::endl;
+  
   for(it1=this->hold_q2->begin();it1!=this->hold_q2->end();it1++){
-  fh << "  " << ((*it1)->get_job_num()) << "," << std::endl;
+    fh << "  " << ((*it1)->get_job_num());
+    if((*it1) != this->hold_q2->back()){
+      fh << ",";
+    }
+    fh << std::endl;
   }
+  
   fh << "  ]," << std::endl;
 
   fh << "  \"holdq1\": [" << std::endl;
+  
   for(it1=this->hold_q1->begin();it1!=this->hold_q1->end();it1++){
-  fh << "  " << ((*it1)->get_job_num()) << "," << std::endl;
+    fh << "  " << ((*it1)->get_job_num());
+    if((*it1) != this->hold_q1->back()){
+      fh << ",";
+    }
+    fh << std::endl;
   }
+
   fh << "  ]," << std::endl;
 
   fh << "  \"completeq\": [" << std::endl;
+  
   for(it2=this->complete_q->begin();it2!=this->complete_q->end();it2++){
-  fh << "  " << ((*it2)->get_job_num()) << "," << std::endl;
+    fh << "  " << ((*it2)->get_job_num());
+    if((*it2) != this->complete_q->back()){
+      fh << ",";
+    }
+    fh << std::endl;
   }
+  
   fh << "  ]," << std::endl;
   
   fh << "  \"waitq\": [" << std::endl;
   for(it2=this->wait_q->begin();it2!=this->wait_q->end();it2++){
-  fh << "  " << ((*it2)->get_job_num()) << "," << std::endl;
+    fh << "  " << ((*it2)->get_job_num());
+    if((*it2) != this->wait_q->back()){
+      fh << ",";
+    }
+    fh << std::endl;
   }
+  
   fh << "  ]," << std::endl;
 
   
   fh << "  \"job\": [" << std::endl;
   
   for(it1=this->hold_q1->begin();it1!=this->hold_q1->end();it1++){
-  fh << "  {" << std::endl;
-  fh << "    \"arrival_time\": " << (*it1)->get_arr_time()
-     << std::endl;
-  fh << "    \"job_num\": " << (*it1)->get_job_num()
-     << std::endl;
-  fh << "    \"memory_required\": " << (*it1)->get_mem_req()
-     << std::endl;
-  fh << "    \"max_devices\": " << (*it1)->get_max_dev()
-     << std::endl;
-  fh << "    \"run_time\": " << (*it1)->get_run_time()
-     << std::endl;
-  fh << "    \"priority\": " << (*it1)->get_priority()
-     << std::endl;
-  fh << "  }," << std::endl;
+    fh << "  {" << std::endl;
+    fh << "    \"arrival_time\": " << (*it1)->get_arr_time()
+       << "," << std::endl;
+    fh << "    \"job_num\": " << (*it1)->get_job_num()
+       << "," << std::endl;
+    fh << "    \"memory_required\": " << (*it1)->get_mem_req()
+       << "," << std::endl;
+    fh << "    \"max_devices\": " << (*it1)->get_max_dev()
+       << "," << std::endl;
+    fh << "    \"run_time\": " << (*it1)->get_run_time()
+       << "," << std::endl;
+    fh << "    \"priority\": " << (*it1)->get_priority()
+       << std::endl;
+    if(this->hold_q2->empty()
+       && this->ready_q->empty()
+       && this->complete_q->empty()
+       && this->wait_q->empty()
+       && cpu == NULL
+       && (*it1) == this->hold_q1->back()){
+      fh << "  }" << std::endl;
+    } else {
+      fh << "  }," << std::endl;
+    }
   }
 
   for(it1=this->hold_q2->begin();it1!=this->hold_q2->end();it1++){
-  fh << "  {" << std::endl;
-  fh << "    \"arrival_time\": " << (*it1)->get_arr_time()
-     << std::endl;
-  fh << "    \"job_num\": " << (*it1)->get_job_num()
-     << std::endl;
-  fh << "    \"memory_required\": " << (*it1)->get_mem_req()
-     << std::endl;
-  fh << "    \"max_devices\": " << (*it1)->get_max_dev()
-     << std::endl;
-  fh << "    \"run_time\": " << (*it1)->get_run_time()
-     << std::endl;
-  fh << "    \"priority\": " << (*it1)->get_priority()
-     << std::endl;
-  fh << "  }," << std::endl;
+    fh << "  {" << std::endl;
+    fh << "    \"arrival_time\": " << (*it1)->get_arr_time()
+       << "," << std::endl;
+    fh << "    \"job_num\": " << (*it1)->get_job_num()
+       << "," << std::endl;
+    fh << "    \"memory_required\": " << (*it1)->get_mem_req()
+       << "," << std::endl;
+    fh << "    \"max_devices\": " << (*it1)->get_max_dev()
+       << "," << std::endl;
+    fh << "    \"run_time\": " << (*it1)->get_run_time()
+       << "," << std::endl;
+    fh << "    \"priority\": " << (*it1)->get_priority()
+       << std::endl;
+    if(this->ready_q->empty()
+       && this->complete_q->empty()
+       && this->wait_q->empty()
+       && cpu == NULL
+       && (*it1) == this->hold_q2->back()){
+      fh << "  }" << std::endl;
+    } else {
+      fh << "  }," << std::endl;
+    }
   }
   
   for(it2=this->ready_q->begin();it2!=this->ready_q->end();it2++){
-  fh << "  {" << std::endl;
-  fh << "    \"arrival_time\": " << (*it2)->get_arr_time()
-     << std::endl;
-  fh << "    \"job_num\": " << (*it2)->get_job_num()
-     << std::endl;
-  fh << "    \"memory_required\": " << (*it2)->get_mem_req()
-     << std::endl;
-  fh << "    \"max_devices\": " << (*it2)->get_max_dev()
-     << std::endl;
-  fh << "    \"run_time\": " << (*it2)->get_run_time()
-     << std::endl;
-  fh << "    \"priority\": " << (*it2)->get_priority()
-     << std::endl;
-  fh << "    \"allocated_devices\": " << (*it2)->get_alloc_dev()
-     << std::endl;
-  fh << "    \"elapsed_time\": " << (*it2)->get_elap_time()
-     << std::endl;
-  fh << "  }," << std::endl;
+    fh << "  {" << std::endl;
+    fh << "    \"arrival_time\": " << (*it2)->get_arr_time()
+       << "," << std::endl;
+    fh << "    \"job_num\": " << (*it2)->get_job_num()
+       << "," << std::endl;
+    fh << "    \"memory_required\": " << (*it2)->get_mem_req()
+       << "," << std::endl;
+    fh << "    \"max_devices\": " << (*it2)->get_max_dev()
+       << "," << std::endl;
+    fh << "    \"run_time\": " << (*it2)->get_run_time()
+       << "," << std::endl;
+    fh << "    \"priority\": " << (*it2)->get_priority()
+       << "," << std::endl;
+    fh << "    \"allocated_devices\": " << (*it2)->get_alloc_dev()
+       << "," << std::endl;
+    fh << "    \"elapsed_time\": " << (*it2)->get_elap_time()
+       << std::endl;
+    if(this->complete_q->empty()
+       && this->wait_q->empty()
+       && cpu == NULL
+       && (*it2) == this->ready_q->back()){
+      fh << "  }" << std::endl;
+    } else {
+      fh << "  }," << std::endl;
+    }
   }
 
   for(it2=this->wait_q->begin();it2!=this->wait_q->end();it2++){
-  fh << "  {" << std::endl;
-  fh << "    \"arrival_time\": " << (*it2)->get_arr_time()
-     << std::endl;
-  fh << "    \"job_num\": " << (*it2)->get_job_num()
-     << std::endl;
-  fh << "    \"memory_required\": " << (*it2)->get_mem_req()
-     << std::endl;
-  fh << "    \"max_devices\": " << (*it2)->get_max_dev()
-     << std::endl;
-  fh << "    \"run_time\": " << (*it2)->get_run_time()
-     << std::endl;
-  fh << "    \"priority\": " << (*it2)->get_priority()
-     << std::endl;
-  fh << "    \"allocated_devices\": " << (*it2)->get_alloc_dev()
-     << std::endl;
-  fh << "    \"elapsed_time\": " << (*it2)->get_elap_time()
-     << std::endl;
-  fh << "  }," << std::endl;
+    fh << "  {" << std::endl;
+    fh << "    \"arrival_time\": " << (*it2)->get_arr_time()
+       << "," << std::endl;
+    fh << "    \"job_num\": " << (*it2)->get_job_num()
+       << "," << std::endl;
+    fh << "    \"memory_required\": " << (*it2)->get_mem_req()
+       << "," << std::endl;
+    fh << "    \"max_devices\": " << (*it2)->get_max_dev()
+       << "," << std::endl;
+    fh << "    \"run_time\": " << (*it2)->get_run_time()
+       << "," << std::endl;
+    fh << "    \"priority\": " << (*it2)->get_priority()
+       << "," << std::endl;
+    fh << "    \"allocated_devices\": " << (*it2)->get_alloc_dev()
+       << "," << std::endl;
+    fh << "    \"elapsed_time\": " << (*it2)->get_elap_time()
+       << std::endl;
+    if(this->complete_q->empty()
+       && cpu == NULL
+       && (*it2) == this->wait_q->back()){
+      fh << "  }" << std::endl;
+    } else {
+      fh << "  }," << std::endl;
+    }
   }
 
   for(it2=this->complete_q->begin();it2!=this->complete_q->end();it2++){
     fh << "    {" << std::endl;
     fh << "      \"arrival_time\": " << (*it2)->get_arr_time()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"job_num\": " << (*it2)->get_job_num()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"memory_required\": " << (*it2)->get_mem_req()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"max_devices\": " << (*it2)->get_max_dev()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"run_time\": " << (*it2)->get_run_time()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"priority\": " << (*it2)->get_priority()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"allocated_devices\": " << (*it2)->get_alloc_dev()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"elapsed_time\": " << (*it2)->get_elap_time()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"turnaround_time\": " << (*it2)->get_turnaround_time()
-       << std::endl;
+       << "," << std::endl;
     fh << "      \"weighted_turnaround_time\": "
        << (*it2)->get_weighted_turnaround_time()
        << std::endl;
-    fh << "    }," << std::endl;
+    if(this->cpu == NULL
+       && (*it2) == this->complete_q->back()){
+      fh << "    }" << std::endl;
+    } else {
+      fh << "    }," << std::endl;
+    }
   }
 
   if(this->cpu!=NULL){
-  fh << "  {" << std::endl;
-  fh << "    \"arrival_time\": " << this->cpu->get_arr_time()
-     << std::endl;
-  fh << "    \"job_num\": " << this->cpu->get_job_num()
-     << std::endl;
-  fh << "    \"memory_required\": " << this->cpu->get_mem_req()
-     << std::endl;
-  fh << "    \"max_devices\": " << this->cpu->get_max_dev()
-     << std::endl;
-  fh << "    \"run_time\": " << this->cpu->get_run_time()
-     << std::endl;
-  fh << "    \"priority\": " << this->cpu->get_priority()
-     << std::endl;
-  fh << "    \"allocated_devices\": " << this->cpu->get_alloc_dev()
-     << std::endl;
-  fh << "    \"elapsed_time\": " << this->cpu->get_elap_time()
-     << std::endl;
-  fh << "  }," << std::endl;
+    fh << "  {" << std::endl;
+    fh << "    \"arrival_time\": " << this->cpu->get_arr_time()
+       << "," << std::endl;
+    fh << "    \"job_num\": " << this->cpu->get_job_num()
+       << "," << std::endl;
+    fh << "    \"memory_required\": " << this->cpu->get_mem_req()
+       << "," << std::endl;
+    fh << "    \"max_devices\": " << this->cpu->get_max_dev()
+       << "," << std::endl;
+    fh << "    \"run_time\": " << this->cpu->get_run_time()
+       << "," << std::endl;
+    fh << "    \"priority\": " << this->cpu->get_priority()
+       << "," << std::endl;
+    fh << "    \"allocated_devices\": " << this->cpu->get_alloc_dev()
+       << "," << std::endl;
+    fh << "    \"elapsed_time\": " << this->cpu->get_elap_time()
+       << std::endl;
+    fh << "  }" << std::endl;
   }
 
-  fh << "  ]," << std::endl;
+  fh << "  ]" << std::endl;
   
   fh << "}" << std::endl;
   
