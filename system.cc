@@ -107,51 +107,56 @@ void System::jump_to_time(int time){
   std::cout << "time: " << time << " system time: " << this->get_time()
             << " remaining quant: " << this->get_remaining_quantum()
             << std::endl;
-  
-  if(time <= this->get_time()){
-    return;
-  }
-  if(this->cpu == NULL){
-    // don't try to finish a quantum if nothing's running
-    this->set_remaining_quantum(0);
-    std::cout << "nothing running, not finishing quantum" << std::endl;
-  }
-  
-  if(get_remaining_quantum()){ //if still in a quantum
-    std::cout << "we're still in a running quantum" << std::endl;
-    if(this->get_remaining_quantum() <= (time - this->get_time())){ //time is more than remaining quantum
-      std::cout << "finishing quantum" << std::endl;
-      continue_quantum(this->get_remaining_quantum());
+  while(this->get_time() < time){
+    if(this->cpu == NULL){
+      // don't try to finish a quantum if nothing's running
       this->set_remaining_quantum(0);
+      std::cout << "nothing running, not finishing quantum" << std::endl;
     }
-    else{
-      std::cout << "not finishing quantum" << std::endl;
-      this->set_remaining_quantum(this->get_remaining_quantum()
-                                  -(time - this->get_time()));
-      continue_quantum((time - this->get_time()));
-      return;
+    
+    if(get_remaining_quantum()){ //if still in a quantum
+      std::cout << "we're still in a running quantum" << std::endl;
+      if(this->get_remaining_quantum() <= (time - this->get_time())){ //time is more than remaining quantum
+        std::cout << "finishing quantum" << std::endl;
+        this->continue_quantum(this->get_remaining_quantum());
+        this->set_remaining_quantum(0);
+      }
+      else{
+        std::cout << "not finishing quantum" << std::endl;
+        this->set_remaining_quantum(this->get_remaining_quantum()
+                                    -(time - this->get_time()));
+        this->continue_quantum((time - this->get_time()));
+        return;
+      }
     }
-  }
-  int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
-  // integer division
-  this->set_remaining_quantum(this->get_quantum() -
-                              ((time - this->get_time()) % this->get_quantum()));
-
-  for(int i=0; i<num_quantums; i++){
-  // run quantums until we're almost to time t
-    this->run_quantum();
-  }
-
-  this->swap_cpu_jobs();
+    int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
+    // integer division
+    this->set_remaining_quantum(this->get_quantum() -
+                                ((time - this->get_time()) % this->get_quantum()));
   
-  if(this->cpu == NULL){
-    // no jobs queued
-    this->set_time(time);
-  } else {
-    this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
-    // run partial quantum
-    this->set_time(time);
-  }
+    for(int i=0; i<num_quantums; i++){
+    // run quantums until we're almost to time t
+      this->run_quantum();
+    }
+  
+    this->swap_cpu_jobs();
+  
+    if(this->cpu == NULL){
+      // no jobs queued
+      this->set_time(time);
+    } else {
+      if(time - this->get_time() < this->cpu->get_remaining_time()){
+        // job does not finish in the beginnning of this quantum
+        this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
+        // run partial quantum
+        this->set_time(time);
+      } else {
+        this->set_time(this->get_time() + this->cpu->get_remaining_time());
+        this->cpu->set_elap_time(this->cpu->get_run_time());
+        this->set_remaining_quantum(0);
+      }
+    }
+  }    
   return; 
 }
 
@@ -160,9 +165,17 @@ void System::continue_quantum(int length){
     // no jobs queued
     this->set_time(this->get_time()+length);
   } else {
-    this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
-    // run partial quantum
-    this->set_time(this->get_time()+length);
+    if(this->get_quantum() < this->cpu->get_remaining_time()){
+      // process does not finish in remaining time
+      this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
+      // run partial quantum
+      this->set_time(this->get_time()+length);
+    } else {
+      // process completes
+      this->set_time(this->get_time() + this->cpu->get_remaining_time());
+      this->cpu->set_elap_time(this->cpu->get_run_time());
+      this->set_remaining_quantum(0);
+    }
   }
 }
 
@@ -175,15 +188,16 @@ void System::run_quantum(){
     this->set_time(this->get_time() + this->get_quantum());
     return;
   }
-  if(this->cpu->get_elap_time() + this->get_quantum() < this->cpu->get_run_time()){
+  if(this->get_quantum() < this->cpu->get_remaining_time()){
     // if this job does not complete in the current quantum
     this->set_time(this->get_time() + this->get_quantum());
     this->cpu->set_elap_time(this->cpu->get_elap_time()+this->get_quantum());
     // increase run time
   } else {
     this->set_time(this->get_time() +
-                   (this->cpu->get_run_time() - this->cpu->get_elap_time()));
+                   (this->cpu->get_remaining_time()));
     this->cpu->set_elap_time(this->cpu->get_run_time());
+    this->set_remaining_quantum(0);
   }
 }
 
@@ -232,6 +246,7 @@ void System::complete_job(int time, int job_num){
       if((*it2)->get_mem_req() <= this->get_avail_mem()){
         // add process to ready q
         this->ready_q->push_back(new Process(*it2));
+        this->hold_q1->erase(it2);
         this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
       }
     }
@@ -242,6 +257,7 @@ void System::complete_job(int time, int job_num){
       if((*it2)->get_mem_req() <= this->get_avail_mem()){
         // add process to ready q
         this->ready_q->push_back(new Process(*it2));
+        this->hold_q2->erase(it2);
         this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
       }
     }
