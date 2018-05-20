@@ -15,7 +15,8 @@ class System {
     avail_mem,
     tot_dev,
     avail_dev,
-    quantum;
+    quantum,
+    remaining_quantum;
 
   std::list<Job*> *sub_q;
   std::list<Job*> *hold_q1;
@@ -40,12 +41,14 @@ class System {
   int get_tot_dev();
   int get_avail_dev();
   int get_quantum();
+  int get_remaining_quantum();
   int get_running_job_num();
   float get_avg_turnaround_time();
   float get_avg_weighted_turnaround_time();
   void set_time(int time);
   void set_avail_dev(int devices);
   void set_avail_mem(int memory);
+  void set_remaining_quantum(int remaining);
   bool is_safe();
 
   void submit(Job *job);
@@ -59,6 +62,7 @@ class System {
   void jump_to_time(int time); // execute quantums until time t (and partials
                                // as needed)
   void complete_job(int time, int job_num);
+  void continue_quantum(int length);
 };
 
 #endif

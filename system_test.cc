@@ -32,7 +32,7 @@ void system_jump_test(){
   assert(system->get_running_job_num()==1);
   system->jump_to_time(9);
   system->status();
-  assert(system->get_running_job_num()==2);
+  assert(system->get_running_job_num()==1);
 }
 
 void system_quant_test(){

@@ -37,6 +37,7 @@ int System::get_avail_mem(){return this->avail_mem;}
 int System::get_tot_dev(){return this->tot_dev;}
 int System::get_avail_dev(){return this->avail_dev;}
 int System::get_quantum(){return this->quantum;}
+int System::get_remaining_quantum(){return this->remaining_quantum;}
 int System::get_running_job_num(){return this->cpu==NULL?0:this->cpu->get_job_num();}
 float System::get_avg_turnaround_time(){
   int sum, n = 0;
@@ -63,6 +64,7 @@ float System::get_avg_weighted_turnaround_time(){
 void System::set_time(int time){this->time = time;}
 void System::set_avail_mem(int memory){this->avail_mem = memory;}
 void System::set_avail_dev(int devices){this->avail_dev = devices;}
+void System::set_remaining_quantum(int remaining){this->remaining_quantum = remaining;}
 
 bool sort_hold_q1(Job *job1, Job *job2){
   // sorting function for hold queue 1
@@ -104,8 +106,22 @@ void System::jump_to_time(int time){
   if(time <= this->get_time()){
     return;
   }
+  if(get_remaining_quantum()){ //if still in a quantum
+    if(this->get_remaining_quantum() <= (time - this->get_time())){ //time is more than remaining quantum
+      continue_quantum(this->get_remaining_quantum());
+      this->set_time(this->get_time() + this->get_remaining_quantum());
+      this->set_remaining_quantum(0);
+    }
+    else{
+      continue_quantum((time - this->get_time()));
+      this->set_remaining_quantum(this->get_remaining_quantum()-(time - this->get_time()));
+      return;
+    }
+  }
   int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
   // integer division
+  this->set_remaining_quantum((time - this->get_time()) % this->get_quantum());
+
   for(int i=0; i<num_quantums; i++){
   // run quantums until we're almost to time t
     this->run_quantum();
@@ -120,6 +136,18 @@ void System::jump_to_time(int time){
     this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
     // run partial quantum
     this->set_time(time);
+  }
+  return; 
+}
+
+void System::continue_quantum(int length){
+  if(this->cpu == NULL){
+    // no jobs queued
+    this->set_time(this->get_time()+length);
+  } else {
+    this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
+    // run partial quantum
+    this->set_time(this->get_time()+length);
   }
 }
 
