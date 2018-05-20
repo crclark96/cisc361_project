@@ -26,6 +26,9 @@ int Process::get_run_time(){return this->job->get_run_time();}
 int Process::get_priority(){return this->job->get_priority();}
 int Process::get_compl_time(){return this->compl_time;}
 int Process::get_needed_dev(){return this->needed_dev;}
+int Process::get_remaining_time(){
+  return this->get_run_time() - this->get_elap_time();
+}
 int Process::get_turnaround_time(){
   return this->compl_time == -1  
     ? -1  // if job is not complete return -1

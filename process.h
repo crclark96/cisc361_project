@@ -32,6 +32,7 @@ class Process{
   int get_turnaround_time();
   float get_weighted_turnaround_time();
   int get_needed_dev();
+  int get_remaining_time();
 };
 
 #endif
