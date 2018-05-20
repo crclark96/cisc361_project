@@ -214,7 +214,7 @@ void System::complete_job(int time, int job_num){
 
     // check wait q
     std::list<Process*>::iterator it1;
-    for(it1 = this->wait_q->begin(); it1 != this->wait_q->end(); it1++){
+    for(it1 = this->wait_q->begin(); it1 != this->wait_q->end();){
       // if we have the available devices
       if((*it1)->get_needed_dev() <= this->get_avail_dev()){
         // pretend to allocate devices
@@ -227,6 +227,7 @@ void System::complete_job(int time, int job_num){
           (*it1)->set_alloc_dev((*it1)->get_alloc_dev() - (*it1)->get_needed_dev());
           this->set_avail_dev(this->get_avail_dev() + (*it1)->get_needed_dev());
           // check next in wait queue
+          it1++;
           continue; 
         } else {
           // set needed devices to 0
@@ -234,7 +235,7 @@ void System::complete_job(int time, int job_num){
           // add to ready q
           this->ready_q->push_back(*it1);
           // remove from wait q
-          this->wait_q->erase(it1);
+          it1 = this->wait_q->erase(it1);
         }
       }
     }
