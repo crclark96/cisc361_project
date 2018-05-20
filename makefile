@@ -3,9 +3,12 @@ CFLAGS = -std=c++98 -g
 OBJS = system.o job.o process.o
 TESTS = system_test intake_test banker_test
 
-default: intake.o
+default: intake
 
 test: $(TESTS)
+
+intake: intake.o $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
 
 system_test: system_test.o $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -23,4 +26,4 @@ banker_test: banker_test.o $(OBJS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm *.o D*.json $(TESTS)
+	rm -f *.o D*.json $(TESTS) intake
