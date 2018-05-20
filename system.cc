@@ -263,9 +263,12 @@ void System::request(int time, int job_num, int dev){
 
 void System::release(int time, int job_num, int dev){
   std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
-  if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
+  if(this->cpu != NULL && this->cpu->get_job_num() == job_num
+     && this->cpu->get_alloc_dev() >= dev){
     this->set_avail_dev(this->get_avail_dev()+dev);
     this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
+  } else if (this->cpu != NULL && this->cpu->get_job_num() == job_num) {
+    std::cout << "not enough devices to release" << std::endl;
   } else if (this->cpu == NULL){
     std::cout << "no current running job" << std::endl;
   } else {
