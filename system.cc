@@ -241,24 +241,29 @@ void System::complete_job(int time, int job_num){
 
     std::list<Job*>::iterator it2;
     // check hold q 1
-    for(it2 = this->hold_q1->begin(); it2 != hold_q1->end(); it2++){
-      // check memory
-      if((*it2)->get_mem_req() <= this->get_avail_mem()){
-        // add process to ready q
-        this->ready_q->push_back(new Process(*it2));
-        this->hold_q1->erase(it2);
-        this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
+    if(!(this->hold_q1->empty())){
+      for(it2 = this->hold_q1->begin(); it2 != this->hold_q1->end();){// check memory
+        if((*it2)->get_mem_req() <= this->get_avail_mem()){
+          // add process to ready q
+          this->ready_q->push_back(new Process(*it2));
+          this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
+          it2 = this->hold_q1->erase(it2);
+        }
+        else{it2++;}
       }
     }
 
-    // check hold q 2
-    for(it2 = this->hold_q2->begin(); it2 != hold_q2->end(); it2++){
-      // check memory
-      if((*it2)->get_mem_req() <= this->get_avail_mem()){
-        // add process to ready q
-        this->ready_q->push_back(new Process(*it2));
-        this->hold_q2->erase(it2);
-        this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
+    if(!this->hold_q2->empty()){
+      // check hold q 2
+      for(it2 = this->hold_q2->begin(); it2 != this->hold_q2->end();){
+        // check memory
+        if((*it2)->get_mem_req() <= this->get_avail_mem()){
+          // add process to ready q
+          this->ready_q->push_back(new Process(*it2));
+          this->set_avail_mem(this->get_avail_mem() - (*it2)->get_mem_req());
+          it2 = this->hold_q2->erase(it2);
+        }
+        else{it2++;}
       }
     }
     
