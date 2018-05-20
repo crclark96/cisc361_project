@@ -606,6 +606,10 @@ void System::dump_json(){
      << "," << std::endl;
   fh << "  \"available_memory\": " << (this->get_avail_mem())
      << "," << std::endl;
+  fh << "  \"total_devices\": " << (this->get_tot_dev())
+     << "," << std::endl;
+  fh << "  \"available_devices\": " << (this->get_avail_dev())
+     << "," << std::endl;
   fh << "  \"quantum\": " << (this->get_quantum())
      << "," << std::endl;
   fh << "  \"avg_turnaround\": " << (this->get_avg_turnaround_time())
@@ -613,6 +617,8 @@ void System::dump_json(){
   fh << "  \"avg_weighted_turnaround\": "
      << (this->get_avg_weighted_turnaround_time())
      << "," << std::endl;
+
+  fh << "  \"submitq\": []," << std::endl;
 
   fh << "  \"readyq\": [" << std::endl;
   
