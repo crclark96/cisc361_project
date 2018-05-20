@@ -291,9 +291,12 @@ void System::request(int time, int job_num, int dev){
 
 void System::release(int time, int job_num, int dev){
   std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
-  if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
+  if(this->cpu != NULL && this->cpu->get_job_num() == job_num
+     && this->cpu->get_alloc_dev() >= dev){
     this->set_avail_dev(this->get_avail_dev()+dev);
     this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
+  } else if (this->cpu != NULL && this->cpu->get_job_num() == job_num) {
+    std::cout << "not enough devices to release" << std::endl;
   } else if (this->cpu == NULL){
     std::cout << "no current running job" << std::endl;
   } else {
@@ -716,13 +719,15 @@ void System::dump_json(){
     fh << "  {" << std::endl;
     fh << "    \"arrival_time\": " << (*it1)->get_arr_time()
        << "," << std::endl;
-    fh << "    \"job_num\": " << (*it1)->get_job_num()
+    fh << "    \"id\": " << (*it1)->get_job_num()
        << "," << std::endl;
     fh << "    \"memory_required\": " << (*it1)->get_mem_req()
        << "," << std::endl;
     fh << "    \"max_devices\": " << (*it1)->get_max_dev()
        << "," << std::endl;
     fh << "    \"run_time\": " << (*it1)->get_run_time()
+       << "," << std::endl;
+    fh << "    \"remaining_time\": " << (*it1)->get_run_time()
        << "," << std::endl;
     fh << "    \"priority\": " << (*it1)->get_priority()
        << std::endl;
@@ -742,13 +747,15 @@ void System::dump_json(){
     fh << "  {" << std::endl;
     fh << "    \"arrival_time\": " << (*it1)->get_arr_time()
        << "," << std::endl;
-    fh << "    \"job_num\": " << (*it1)->get_job_num()
+    fh << "    \"id\": " << (*it1)->get_job_num()
        << "," << std::endl;
     fh << "    \"memory_required\": " << (*it1)->get_mem_req()
        << "," << std::endl;
     fh << "    \"max_devices\": " << (*it1)->get_max_dev()
        << "," << std::endl;
     fh << "    \"run_time\": " << (*it1)->get_run_time()
+       << "," << std::endl;
+    fh << "    \"remaining_time\": " << (*it1)->get_run_time()
        << "," << std::endl;
     fh << "    \"priority\": " << (*it1)->get_priority()
        << std::endl;
@@ -767,7 +774,7 @@ void System::dump_json(){
     fh << "  {" << std::endl;
     fh << "    \"arrival_time\": " << (*it2)->get_arr_time()
        << "," << std::endl;
-    fh << "    \"job_num\": " << (*it2)->get_job_num()
+    fh << "    \"id\": " << (*it2)->get_job_num()
        << "," << std::endl;
     fh << "    \"memory_required\": " << (*it2)->get_mem_req()
        << "," << std::endl;
@@ -777,7 +784,10 @@ void System::dump_json(){
        << "," << std::endl;
     fh << "    \"priority\": " << (*it2)->get_priority()
        << "," << std::endl;
-    fh << "    \"allocated_devices\": " << (*it2)->get_alloc_dev()
+    fh << "    \"devices_allocated\": " << (*it2)->get_alloc_dev()
+       << "," << std::endl;
+    fh << "    \"remaining_time\": "
+       << (*it2)->get_run_time() - (*it2)->get_elap_time()
        << "," << std::endl;
     fh << "    \"elapsed_time\": " << (*it2)->get_elap_time()
        << std::endl;
@@ -795,7 +805,7 @@ void System::dump_json(){
     fh << "  {" << std::endl;
     fh << "    \"arrival_time\": " << (*it2)->get_arr_time()
        << "," << std::endl;
-    fh << "    \"job_num\": " << (*it2)->get_job_num()
+    fh << "    \"id\": " << (*it2)->get_job_num()
        << "," << std::endl;
     fh << "    \"memory_required\": " << (*it2)->get_mem_req()
        << "," << std::endl;
@@ -805,7 +815,10 @@ void System::dump_json(){
        << "," << std::endl;
     fh << "    \"priority\": " << (*it2)->get_priority()
        << "," << std::endl;
-    fh << "    \"allocated_devices\": " << (*it2)->get_alloc_dev()
+    fh << "    \"devices_allocated\": " << (*it2)->get_alloc_dev()
+       << "," << std::endl;
+    fh << "    \"remaining_time\": "
+       << (*it2)->get_run_time() - (*it2)->get_elap_time()
        << "," << std::endl;
     fh << "    \"elapsed_time\": " << (*it2)->get_elap_time()
        << std::endl;
@@ -822,7 +835,7 @@ void System::dump_json(){
     fh << "    {" << std::endl;
     fh << "      \"arrival_time\": " << (*it2)->get_arr_time()
        << "," << std::endl;
-    fh << "      \"job_num\": " << (*it2)->get_job_num()
+    fh << "      \"id\": " << (*it2)->get_job_num()
        << "," << std::endl;
     fh << "      \"memory_required\": " << (*it2)->get_mem_req()
        << "," << std::endl;
@@ -832,11 +845,16 @@ void System::dump_json(){
        << "," << std::endl;
     fh << "      \"priority\": " << (*it2)->get_priority()
        << "," << std::endl;
-    fh << "      \"allocated_devices\": " << (*it2)->get_alloc_dev()
+    fh << "      \"devices_allocated\": " << (*it2)->get_alloc_dev()
        << "," << std::endl;
     fh << "      \"elapsed_time\": " << (*it2)->get_elap_time()
        << "," << std::endl;
     fh << "      \"turnaround_time\": " << (*it2)->get_turnaround_time()
+       << "," << std::endl;
+    fh << "      \"remaining_time\": "
+       << (*it2)->get_run_time() - (*it2)->get_elap_time()
+       << "," << std::endl;
+    fh << "      \"completion_time\": " << (*it2)->get_compl_time()
        << "," << std::endl;
     fh << "      \"weighted_turnaround_time\": "
        << (*it2)->get_weighted_turnaround_time()
@@ -853,7 +871,7 @@ void System::dump_json(){
     fh << "  {" << std::endl;
     fh << "    \"arrival_time\": " << this->cpu->get_arr_time()
        << "," << std::endl;
-    fh << "    \"job_num\": " << this->cpu->get_job_num()
+    fh << "    \"id\": " << this->cpu->get_job_num()
        << "," << std::endl;
     fh << "    \"memory_required\": " << this->cpu->get_mem_req()
        << "," << std::endl;
@@ -863,7 +881,10 @@ void System::dump_json(){
        << "," << std::endl;
     fh << "    \"priority\": " << this->cpu->get_priority()
        << "," << std::endl;
-    fh << "    \"allocated_devices\": " << this->cpu->get_alloc_dev()
+    fh << "    \"devices_allocated\": " << this->cpu->get_alloc_dev()
+       << "," << std::endl;
+    fh << "    \"remaining_time\": "
+       << this->cpu->get_run_time() - this->cpu->get_elap_time()
        << "," << std::endl;
     fh << "    \"elapsed_time\": " << this->cpu->get_elap_time()
        << std::endl;
