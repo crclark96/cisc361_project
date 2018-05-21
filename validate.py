@@ -5,9 +5,11 @@ import sys
 
 results = [
     ["D10.json","D26.json",
-     "D11.json","D20.json"],
+     "D11.json","D20.json",
+     "D9999.json"],
     ["test1_D10.json","test1_D26.json",
-     "test2_D11.json","test2_D20.json"]
+     "test2_D11.json","test2_D20.json",
+     "sample_input.json"]
 ]
 
 def validate(output, expected):

@@ -13,6 +13,7 @@ intake: intake.o $(OBJS)
 validate: intake
 	./$^ test1.in
 	./$^ test2.in
+	./$^ sample.in
 	./validate.py
 
 system_test: system_test.o $(OBJS)
