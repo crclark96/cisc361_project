@@ -1,6 +1,6 @@
 /* Collin Clark, Colby Banbury
  * intake function
- * takes in the file and parse each line for the relavent information and makes the appropriate system calls
+ * takes in the file and parse each line for the relevant information and makes the appropriate system calls
  * also creates the jobs that get sent into the system
  */
 
