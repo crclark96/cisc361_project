@@ -123,6 +123,10 @@ void System::jump_to_time(int time){
       }
       else{
         std::cout << "not finishing quantum" << std::endl;
+        std::cout << "remaining_quant: "
+                  << this->get_remaining_quantum() - (time - this->get_time())
+                  << " continue_quant: " << time - this->get_time()
+                  << std::endl;
         this->set_remaining_quantum(this->get_remaining_quantum()
                                     -(time - this->get_time()));
         this->continue_quantum((time - this->get_time()));
@@ -130,6 +134,8 @@ void System::jump_to_time(int time){
       }
     }
     int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
+    std::cout << "jumping to time: " << time << " num_quants: "
+              << num_quantums << std::endl;
     // integer division
     this->set_remaining_quantum(this->get_quantum() -
                                 ((time - this->get_time()) % this->get_quantum()));
@@ -165,7 +171,7 @@ void System::continue_quantum(int length){
     // no jobs queued
     this->set_time(this->get_time()+length);
   } else {
-    if(this->get_quantum() < this->cpu->get_remaining_time()){
+    if(length < this->cpu->get_remaining_time()){
       // process does not finish in remaining time
       this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
       // run partial quantum
@@ -301,6 +307,10 @@ void System::request(int time, int job_num, int dev){
   if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
     if(this->get_avail_dev() < dev){
       std::cout << "cannot allocate devices, not enough resources" << std::endl;
+      this->cpu->set_needed_dev(dev);
+      this->wait_q->push_back(this->cpu);
+      this->cpu = NULL; // remove job from cpu
+      this->set_remaining_quantum(0);
     } else if (this->cpu->get_max_dev() < this->cpu->get_alloc_dev() + dev) {
       std::cout << "process requesting more devices than declared" << std::endl;
     } else {
@@ -308,6 +318,9 @@ void System::request(int time, int job_num, int dev){
       this->set_avail_dev(this->get_avail_dev()-dev);
       this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()+dev);
       if(this->is_safe()){
+        this->ready_q->push_back(this->cpu); // remove current running process
+        this->cpu = NULL;
+        this->set_remaining_quantum(0);
         return;
       } else {
         // return devices
@@ -317,6 +330,8 @@ void System::request(int time, int job_num, int dev){
         this->cpu->set_needed_dev(dev);
         // add job to back of wait queue
         this->wait_q->push_back(this->cpu);
+        this->cpu = NULL; // remove job from cpu
+        this->set_remaining_quantum(0);
       }
     }
     } else if (this->cpu == NULL){
@@ -332,6 +347,38 @@ void System::release(int time, int job_num, int dev){
      && this->cpu->get_alloc_dev() >= dev){
     this->set_avail_dev(this->get_avail_dev()+dev);
     this->cpu->set_alloc_dev(this->cpu->get_alloc_dev()-dev);
+    // check wait queue
+
+    this->ready_q->push_back(this->cpu); // remove process from cpu on release
+    this->cpu = NULL;
+    this->set_remaining_quantum(0);
+    
+    std::list<Process*>::iterator it1;
+    for(it1 = this->wait_q->begin(); it1 != this->wait_q->end();){
+      // if we have the available devices
+      if((*it1)->get_needed_dev() <= this->get_avail_dev()){
+        // pretend to allocate devices
+        (*it1)->set_alloc_dev((*it1)->get_alloc_dev() + (*it1)->get_needed_dev());
+        this->set_avail_dev(this->get_avail_dev() - (*it1)->get_needed_dev());
+  
+        // check if in unsafe state
+        if(!this->is_safe()){
+          // return devices
+          (*it1)->set_alloc_dev((*it1)->get_alloc_dev() - (*it1)->get_needed_dev());
+          this->set_avail_dev(this->get_avail_dev() + (*it1)->get_needed_dev());
+          // check next in wait queue
+          it1++;
+          continue; 
+        } else {
+          // set needed devices to 0
+          (*it1)->set_needed_dev(0);
+          // add to ready q
+          this->ready_q->push_back(*it1);
+          // remove from wait q
+          it1 = this->wait_q->erase(it1);
+        }
+      }
+    }
   } else if (this->cpu != NULL && this->cpu->get_job_num() == job_num) {
     std::cout << "not enough devices to release" << std::endl;
   } else if (this->cpu == NULL){
