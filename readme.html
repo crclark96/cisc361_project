@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+
+<style>
+body {
+  min-width: 200px;
+  max-width: 790px;
+  margin: 0 auto;
+  padding: 30px;
+}
+</style>
+</head>
+<body>
+<div class="markdown-body">
+
+<p><a href="https://travis-ci.org/crclark96/cisc361_project" rel="nofollow"><img src="https://camo.githubusercontent.com/836f63ca66c0dae62d918ca839a8da3bdf4456ca/68747470733a2f2f7472617669732d63692e6f72672f6372636c61726b39362f636973633336315f70726f6a6563742e7376673f6272616e63683d6d6173746572" alt="Build Status" data-canonical-src="https://travis-ci.org/crclark96/cisc361_project.svg?branch=master" style="max-width:100%;"></a></p>
+<h1>
+<a id="user-content-collin-clark-colby-banbury" class="anchor" href="#collin-clark-colby-banbury" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>collin clark, colby banbury</h1>
+<h1>
+<a id="user-content-cisc-361-project" class="anchor" href="#cisc-361-project" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cisc 361 project</h1>
+<h2>
+<a id="user-content-compilation-instructions" class="anchor" href="#compilation-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>compilation instructions</h2>
+<p>our program compiles by makefile -- several options are available</p>
+<p><code>make</code> will generate just the system binary, named <code>intake</code></p>
+<p><code>make test</code> will run several tests and validate their results against provided
+sample output</p>
+<p><code>make validate</code> will run <code>./intake test1.in</code>, <code>./intake test2.in</code>,
+and <code>./intake sample.in</code> and do a quick validation against the provided
+outputs. this is for both the convenience of ourselves and the evaluators</p>
+<p><code>make clean</code> will delete all binaries, object files, and <code>.json</code> format outputs
+other than those included to validate operatoration</p>
+<h2>
+<a id="user-content-dependencies-and-other-notes" class="anchor" href="#dependencies-and-other-notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>dependencies and other notes</h2>
+<p>we have taken special care to follow the c++98 standard</p>
+<p>debugging symbols are enabled by default, and output of all tests
+after every commit can be viewed by clicking the badge above</p>
+<p>no additional dependencies should be required to run this program
+aside from the standard g++ compiler and python2 to run the validation script</p>
+
+</div>
+</body>
+</html>
