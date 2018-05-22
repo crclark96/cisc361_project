@@ -104,107 +104,98 @@ void System::submit(Job *job){
 }
 
 void System::jump_to_time(int time){
-  std::cout << "time: " << time << " system time: " << this->get_time()
-            << " remaining quant: " << this->get_remaining_quantum()
-            << std::endl;
-  while(this->get_time() < time){
-    if(this->cpu == NULL){
-      // don't try to finish a quantum if nothing's running
-      this->set_remaining_quantum(0);
-      std::cout << "nothing running, not finishing quantum" << std::endl;
-    }
-    
-    if(get_remaining_quantum()){ //if still in a quantum
-      std::cout << "we're still in a running quantum" << std::endl;
-      if(this->get_remaining_quantum() <= (time - this->get_time())){ //time is more than remaining quantum
-        std::cout << "finishing quantum" << std::endl;
-        this->continue_quantum(this->get_remaining_quantum());
-        this->set_remaining_quantum(0);
-      }
-      else{
-        std::cout << "not finishing quantum" << std::endl;
-        std::cout << "remaining_quant: "
-                  << this->get_remaining_quantum() - (time - this->get_time())
-                  << " continue_quant: " << time - this->get_time()
-                  << std::endl;
-        this->set_remaining_quantum(this->get_remaining_quantum()
-                                    -(time - this->get_time()));
-        this->continue_quantum((time - this->get_time()));
-        return;
-      }
-    }
-    int num_quantums = (int) ((time - this->get_time()) / this->get_quantum());
-    std::cout << "jumping to time: " << time << " num_quants: "
-              << num_quantums << std::endl;
-    // integer division
-    this->set_remaining_quantum(this->get_quantum() -
-                                ((time - this->get_time()) % this->get_quantum()));
+
+  std::cout << "jumping to time: " << time << std::endl;
+  int length = time - this->get_time();
   
-    for(int i=0; i<num_quantums; i++){
+  if(length < this->get_remaining_quantum()
+     && (this->cpu != NULL
+         && this->cpu->get_remaining_time() > length)){
+    // if the job isn't finishing, and the quantum isn't finishing
+    // increment timers and leave system state the alone
+    this->continue_quantum(length);
+    return;
+  }
+  // end the current quantum by either running the current job
+  // or finishing it
+  this->end_quantum();
+
+  length = time - this->get_time();
+
+  this->swap_cpu_jobs();
+
+  while(length > this->get_quantum()
+        || (this->cpu != NULL
+            && this->cpu->get_remaining_time() < length)){
     // run quantums until we're almost to time t
-      this->run_quantum();
-    }
-  
+    this->run_quantum();
+    length = time - this->get_time();
     this->swap_cpu_jobs();
-  
-    if(this->cpu == NULL){
-      // no jobs queued
-      this->set_time(time);
-    } else {
-      if(time - this->get_time() < this->cpu->get_remaining_time()){
-        // job does not finish in the beginnning of this quantum
-        this->cpu->set_elap_time(this->cpu->get_elap_time() + time - this->get_time());
-        // run partial quantum
-        this->set_time(time);
-      } else {
-        this->set_time(this->get_time() + this->cpu->get_remaining_time());
-        this->cpu->set_elap_time(this->cpu->get_run_time());
-        this->set_remaining_quantum(0);
-      }
-    }
-  }    
+  }
+
+  this->begin_quantum(length); // begin the next quantum
+
   return; 
 }
 
-void System::continue_quantum(int length){
+void System::end_quantum(){
+  // run only the end of a quantum
+  // whether that's running to the end of remaining_quantum or
+  // finishing the current job
   if(this->cpu == NULL){
-    // no jobs queued
-    this->set_time(this->get_time()+length);
-  } else {
-    if(length < this->cpu->get_remaining_time()){
-      // process does not finish in remaining time
-      this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
-      // run partial quantum
-      this->set_time(this->get_time()+length);
-    } else {
-      // process completes
-      this->set_time(this->get_time() + this->cpu->get_remaining_time());
-      this->cpu->set_elap_time(this->cpu->get_run_time());
-      this->set_remaining_quantum(0);
-    }
+    // don't try to finish a quantum if nothing's running
+    this->set_remaining_quantum(0);
+    std::cout << "nothing running, ending remaining quantum prematurely" << std::endl;
+    return;
   }
+
+  if(this->cpu->get_remaining_time() < this->get_remaining_quantum()){
+    // finish job
+    this->set_time(this->get_time() + this->cpu->get_remaining_time());
+    this->cpu->set_elap_time(this->cpu->get_run_time());
+  } else {
+    // finish quantum
+    this->set_time(this->get_time() + this->get_remaining_quantum());
+    this->cpu->set_elap_time(this->cpu->get_elap_time()
+                             + this->get_remaining_quantum());
+  }
+
+  this->set_remaining_quantum(0);
+
+}
+
+void System::begin_quantum(int length){
+  // run only the beginning of a quantum
+
+  if(this->cpu != NULL){
+    // no jobs queued
+    this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
+  }
+
+  this->set_time(this->get_time() + length);
+  this->set_remaining_quantum(this->get_quantum()
+                              - (length % this->get_quantum()));
+  // set how much remaining time we have
+}
+
+void System::continue_quantum(int length){
+  // continue a quantum without finishing it 
+  if(this->cpu != NULL){
+    this->cpu->set_elap_time(this->cpu->get_elap_time() + length);
+  }
+  this->set_time(this->get_time()+length);
+  this->set_remaining_quantum(this->get_remaining_quantum() - length);
+  return;
 }
 
 void System::run_quantum(){
-  // swap next job onto the cpu then run for one quantum
-  // queue up next job
-  this->swap_cpu_jobs();
+  // run for one quantum, does not modify system state
   if(this->cpu == NULL){
       //std::cout << "no available jobs to be run" << std::endl;
     this->set_time(this->get_time() + this->get_quantum());
     return;
   }
-  if(this->get_quantum() < this->cpu->get_remaining_time()){
-    // if this job does not complete in the current quantum
-    this->set_time(this->get_time() + this->get_quantum());
-    this->cpu->set_elap_time(this->cpu->get_elap_time()+this->get_quantum());
-    // increase run time
-  } else {
-    this->set_time(this->get_time() +
-                   (this->cpu->get_remaining_time()));
-    this->cpu->set_elap_time(this->cpu->get_run_time());
-    this->set_remaining_quantum(0);
-  }
+  this->end_quantum();
 }
 
 void System::complete_job(int time, int job_num){
@@ -285,8 +276,8 @@ void System::swap_cpu_jobs(){
    * it does not increment the timer
    */
   if(this->cpu != NULL){
-    // if process is done
-    if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){  
+    if(this->cpu->get_elap_time()>=this->cpu->get_run_time()){
+      // if process is done
       this->complete_job(this->get_time(), this->cpu->get_job_num());
     } else {
       // otherwise
