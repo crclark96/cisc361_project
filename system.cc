@@ -104,6 +104,7 @@ void System::submit(Job *job){
 }
 
 void System::jump_to_time(int time){
+
   int length = time - this->get_time();
   
   if(length < this->get_remaining_quantum()
@@ -204,8 +205,7 @@ void System::complete_job(int time, int job_num){
     // set process completion time
     this->cpu->set_compl_time(this->get_time());
     this->complete_q->push_back(this->cpu); // add process to complete queue
-    this->cpu = NULL;
-    this->set_remaining_quantum(0);
+
     // check wait q
     std::list<Process*>::iterator it1;
     for(it1 = this->wait_q->begin(); it1 != this->wait_q->end();){
@@ -285,8 +285,7 @@ void System::swap_cpu_jobs(){
   if(!this->ready_q->empty()){
     this->cpu=this->ready_q->front();
     this->ready_q->pop_front();
-  }
-  else{
+  } else {
     this->cpu=NULL;
   }
 }
