@@ -20,7 +20,7 @@ Job* process_arrival(std::vector<std::string>);
 
 int main(int argc, const char* argv[]){
   if(argc != 2){
-    std::cout << "usage: ./intake <filename>" << std::endl;
+    //std::cout << "usage: ./intake <filename>" << std::endl;
     return 1;
   }
 
@@ -45,17 +45,17 @@ int main(int argc, const char* argv[]){
         system->submit(job_arrive);
       }
       else{
-        std::cout << "job needs more memeory than system total" << std::endl;
+        //std::cout << "job needs more memeory than system total" << std::endl;
       }
       break;
     case 'Q' :
       std::istringstream(split_line[1]) >> t;
       std::istringstream(split_line[2].substr(2)) >> j;
       std::istringstream(split_line[3].substr(2)) >> d;
-      std::cout << "request | time: " << t 
-            << " job number: " << j 
-            << " devices: " << d 
-            << std::endl;
+      //std::cout << "request | time: " << t 
+            // << " job number: " << j 
+            // << " devices: " << d 
+            // << std::endl;
       system->jump_to_time(t);
       system->request(t, j, d);
       break;
@@ -63,25 +63,25 @@ int main(int argc, const char* argv[]){
       std::istringstream(split_line[1]) >> t;
       std::istringstream(split_line[2].substr(2)) >> j;
       std::istringstream(split_line[3].substr(2)) >> d;
-      std::cout << "release | time: " << t 
-            << " job number: " << j 
-            << " devices: " << d 
-            << std::endl;
+      //std::cout << "release | time: " << t 
+            // << " job number: " << j 
+            // << " devices: " << d 
+            // << std::endl;
       system->jump_to_time(t);
       system->release(t, j, d);
       break;
     case 'D' :
       std::istringstream(split_line[1]) >> t;
-      std::cout << "display | time: " << t<< std::endl;
+      //std::cout << "display | time: " << t<< std::endl;
       system->jump_to_time(t);
       system->status();
       if(split_line[1] == "9999"){
         //Dump the final state. TODO
-        std::cout << "end of input file. Dumping final state " << std::endl;
+        //std::cout << "end of input file. Dumping final state " << std::endl;
       }
       break;
     default:
-      std::cout << "invalid instruction: " << line << std::endl;
+      //std::cout << "invalid instruction: " << line << std::endl;
       return 1;
     }
   }
@@ -102,11 +102,11 @@ System* process_config(std::vector<std::string> split_line){
   std::istringstream(split_line[2].substr(2)) >> m;
   std::istringstream(split_line[3].substr(2)) >> s;
   std::istringstream(split_line[4].substr(2)) >> q;
-  std::cout << "config | time: " << t 
-            << " memory: " << m  
-            << " serial devices: " << s  
-            << " time quantum: " << q
-            << std::endl;
+  //std::cout << "config | time: " << t 
+            // << " memory: " << m  
+            // << " serial devices: " << s  
+            // << " time quantum: " << q
+            // << std::endl;
   return new System(t,m,s,q);
 }
 
@@ -118,12 +118,12 @@ Job* process_arrival(std::vector<std::string> split_line){
   std::istringstream(split_line[4].substr(2)) >> s;
   std::istringstream(split_line[5].substr(2)) >> r;
   std::istringstream(split_line[6].substr(2)) >> p;
-  std::cout << "arrival | time: " << t 
-            << " job number: " << j 
-            << " require memory: " << m 
-            << " max demand: " << s 
-            << " run time: " << r 
-            << " priority: " << p 
-            << std::endl;
+  //std::cout << "arrival | time: " << t 
+            // << " job number: " << j 
+            // << " require memory: " << m 
+            // << " max demand: " << s 
+            // << " run time: " << r 
+            // << " priority: " << p 
+            // << std::endl;
   return new Job(t,j,m,s,r,p);
 }
