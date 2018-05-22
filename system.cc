@@ -83,29 +83,28 @@ bool sort_hold_q2(Job *job1, Job *job2){
 
 void System::submit(Job *job){
   if(job->get_mem_req() > this->get_tot_mem() ||
-   job->get_max_dev() > this->get_tot_dev()){
-  std::cout << "job rejected: insufficient system resources" << std::endl;
+     job->get_max_dev() > this->get_tot_dev()){
+    std::cout << "job rejected: insufficient system resources" << std::endl;
   } else if(job->get_mem_req() > this->get_avail_mem()) {
-  switch(job->get_priority()){
-  case 1:
-    this->hold_q1->push_back(job);
-    this->hold_q1->sort(sort_hold_q1);
-    break;
-  case 2:
-    this->hold_q2->push_back(job);
-    this->hold_q2->sort(sort_hold_q2);
-    break;
-  }
+    switch(job->get_priority()){
+    case 1:
+      this->hold_q1->push_back(job);
+      this->hold_q1->sort(sort_hold_q1);
+      break;
+    case 2:
+      this->hold_q2->push_back(job);
+      this->hold_q2->sort(sort_hold_q2);
+      break;
+    }
   } else {
-  this->ready_q->push_back(new Process(job));
-  this->set_avail_mem(this->get_avail_mem() - job->get_mem_req());
-  // subtract available memory from system if adding to ready queue
+    this->ready_q->push_back(new Process(job));
+    this->set_avail_mem(this->get_avail_mem() - job->get_mem_req());
+    // subtract available memory from system if adding to ready queue
   }
 }
 
 void System::jump_to_time(int time){
 
-  std::cout << "jumping to time: " << time << std::endl;
   int length = time - this->get_time();
   
   if(length < this->get_remaining_quantum()
@@ -145,7 +144,6 @@ void System::end_quantum(){
   if(this->cpu == NULL){
     // don't try to finish a quantum if nothing's running
     this->set_remaining_quantum(0);
-    std::cout << "nothing running, ending remaining quantum prematurely" << std::endl;
     return;
   }
 
@@ -160,7 +158,7 @@ void System::end_quantum(){
                              + this->get_remaining_quantum());
   }
 
-  this->set_remaining_quantum(0);
+  this->set_remaining_quantum(this->get_quantum());
 
 }
 
@@ -191,7 +189,6 @@ void System::continue_quantum(int length){
 void System::run_quantum(){
   // run for one quantum, does not modify system state
   if(this->cpu == NULL){
-      //std::cout << "no available jobs to be run" << std::endl;
     this->set_time(this->get_time() + this->get_quantum());
     return;
   }
