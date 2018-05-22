@@ -84,7 +84,7 @@ bool sort_hold_q2(Job *job1, Job *job2){
 void System::submit(Job *job){
   if(job->get_mem_req() > this->get_tot_mem() ||
      job->get_max_dev() > this->get_tot_dev()){
-    std::cout << "job rejected: insufficient system resources" << std::endl;
+    //std::cout << "job rejected: insufficient system resources" << std::endl;
   } else if(job->get_mem_req() > this->get_avail_mem()) {
     switch(job->get_priority()){
     case 1:
@@ -291,16 +291,16 @@ void System::swap_cpu_jobs(){
 }
 
 void System::request(int time, int job_num, int dev){
-  std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
+  //std::cout << "request at " << time << " by " << job_num << " for " << dev << " devices" << std::endl;
   if(this->cpu != NULL && this->cpu->get_job_num() == job_num){
     if(this->get_avail_dev() < dev){
-      std::cout << "cannot allocate devices, not enough resources" << std::endl;
+      //std::cout << "cannot allocate devices, not enough resources" << std::endl;
       this->cpu->set_needed_dev(dev);
       this->wait_q->push_back(this->cpu);
       this->cpu = NULL; // remove job from cpu
       this->set_remaining_quantum(0);
     } else if (this->cpu->get_max_dev() < this->cpu->get_alloc_dev() + dev) {
-      std::cout << "process requesting more devices than declared" << std::endl;
+      //std::cout << "process requesting more devices than declared" << std::endl;
     } else {
       // pretend to allocate devices
       this->set_avail_dev(this->get_avail_dev()-dev);
@@ -323,14 +323,14 @@ void System::request(int time, int job_num, int dev){
       }
     }
     } else if (this->cpu == NULL){
-    std::cout << "no current running job" << std::endl;
+    //std::cout << "no current running job" << std::endl;
   } else {
-    std::cout << "running job does not match request" << std::endl;
+    //std::cout << "running job does not match request" << std::endl;
   }
 }
 
 void System::release(int time, int job_num, int dev){
-  std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
+  //std::cout << "release at " << time << " by " << job_num << " of " << dev << " devices" << std::endl;
   if(this->cpu != NULL && this->cpu->get_job_num() == job_num
      && this->cpu->get_alloc_dev() >= dev){
     this->set_avail_dev(this->get_avail_dev()+dev);
@@ -368,11 +368,11 @@ void System::release(int time, int job_num, int dev){
       }
     }
   } else if (this->cpu != NULL && this->cpu->get_job_num() == job_num) {
-    std::cout << "not enough devices to release" << std::endl;
+    //std::cout << "not enough devices to release" << std::endl;
   } else if (this->cpu == NULL){
-    std::cout << "no current running job" << std::endl;
+   // std::cout << "no current running job" << std::endl;
   } else {
-    std::cout << "running job does not match request" << std::endl;
+    //std::cout << "running job does not match request" << std::endl;
   }
 }
 
@@ -429,7 +429,7 @@ bool System::is_safe(){
     }
 
     if (found == false){
-      std::cout << "System is not in safe state" << std::endl;
+      //std::cout << "System is not in safe state" << std::endl;
       free(need);
       free(alloc);
       free(j_nums);
@@ -438,12 +438,12 @@ bool System::is_safe(){
       return false;
     }
   }
-  std::cout << "System is in safe state.\nSafe"
-     " the job numbers of the sequence are: ";
-  for (int i = 0; i < P ; i++){
-    std::cout << j_nums[safeSeq[i]] << " ";
-  }
-  std::cout << std::endl;
+  // std::cout << "System is in safe state.\nSafe"
+  //    " the job numbers of the sequence are: ";
+  // for (int i = 0; i < P ; i++){
+  //   std::cout << j_nums[safeSeq[i]] << " ";
+  // }
+  // std::cout << std::endl;
   free(need);
   free(alloc);
   free(j_nums);
